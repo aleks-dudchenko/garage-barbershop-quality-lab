@@ -62,29 +62,34 @@ function saneBarber(value: unknown): LiveBarber | null {
   }
 }
 
+const isRecord = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object'
+
+const isStringList = (v: unknown): v is string[] =>
+  Array.isArray(v) && v.every((p) => typeof p === 'string')
+
+/** Ціни: лишаємо лише послуги, де значення це список рядків. */
+function sanePrices(value: unknown): Record<string, string[]> | undefined {
+  if (!isRecord(value)) return undefined
+  const prices = Object.fromEntries(Object.entries(value).filter(([, list]) => isStringList(list)))
+  return Object.keys(prices).length ? (prices as Record<string, string[]>) : undefined
+}
+
+/** Майстри: відкидаємо записи без слуга чи імені, див. saneBarber. */
+function saneBarbers(value: unknown): LiveBarber[] | undefined {
+  if (!Array.isArray(value)) return undefined
+  const list = value.map(saneBarber).filter((b): b is LiveBarber => b !== null)
+  return list.length ? list : undefined
+}
+
 /** Файл пише зовнішня програма, тож беремо з нього лише те, що впізнали. */
 function sane(input: unknown): Live {
-  if (!input || typeof input !== 'object') return EMPTY
-  const src = input as Record<string, unknown>
+  if (!isRecord(input)) return EMPTY
   const out: Live = {}
-
-  if (typeof src.updatedAt === 'string') out.updatedAt = src.updatedAt
-
-  if (src.prices && typeof src.prices === 'object') {
-    const prices: Record<string, string[]> = {}
-    for (const [service, value] of Object.entries(src.prices as Record<string, unknown>)) {
-      if (Array.isArray(value) && value.every((p) => typeof p === 'string')) {
-        prices[service] = value as string[]
-      }
-    }
-    if (Object.keys(prices).length) out.prices = prices
-  }
-
-  if (Array.isArray(src.barbers)) {
-    const list = src.barbers.map(saneBarber).filter((b): b is LiveBarber => b !== null)
-    if (list.length) out.barbers = list
-  }
-
+  if (typeof input.updatedAt === 'string') out.updatedAt = input.updatedAt
+  const prices = sanePrices(input.prices)
+  if (prices) out.prices = prices
+  const barbers = saneBarbers(input.barbers)
+  if (barbers) out.barbers = barbers
   return out
 }
 
