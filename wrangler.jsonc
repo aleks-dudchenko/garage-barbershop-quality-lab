@@ -1,0 +1,44 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "garage-barbershop",
+  "main": "./worker/index.js",
+  "compatibility_date": "2026-09-22",
+  // Акаунт закладу (Barbershop.garage.irpin@gmail.com). Явно, бо wrangler
+  // бачить кілька акаунтів і без цього поклав би сайт не туди.
+  "account_id": "YOUR_CLOUDFLARE_ACCOUNT_ID",
+
+  // Сайт живе на домені. www веде на нього правилом переадресації в
+  // Cloudflare (Rules → Redirect Rules), воно спрацьовує раніше за воркер.
+  "routes": [
+    { "pattern": "garagebarbershop.com.ua", "custom_domain": true },
+    { "pattern": "www.garagebarbershop.com.ua", "custom_domain": true }
+  ],
+  // workers.dev лишається: на ньому вебхук телеграм-бота (bot/webhook.mjs)
+  // і копія для перевірки, від пошуковиків її закриває public/_headers.
+  "workers_dev": true,
+
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    // Сайт односторінковий і клієнтських маршрутів не має: невідома адреса
+    // мусить чесно віддавати 404, а не копію головної під виглядом 200.
+    "not_found_handling": "none",
+    // Воркер запускається лише на цих шляхах. Уся решта, тобто HTML, скрипти,
+    // стилі й фото своїх майстрів, іде з мережі Cloudflare напряму.
+    "run_worker_first": ["/data/content.json", "/data/availability.json", "/uploads/*", "/api/*"]
+  },
+
+  // Живий вміст, який пише телеграм-бот: ціни, склад майстрів і їхні фото.
+  // Створено як: npx wrangler kv namespace create CONTENT
+  "kv_namespaces": [{ "binding": "CONTENT", "id": "YOUR_KV_NAMESPACE_ID" }],
+
+  // Вільні вікна з Altegio: раз на десять хвилин, див. worker/index.js.
+  "triggers": { "crons": ["*/10 * * * *"] },
+
+  // Телеграм-бот: доступи, незакінчені дії й знімок для /undo живуть в одному
+  // Durable Object, тож оновлення йдуть по черзі. Див. worker/bot.js.
+  "durable_objects": { "bindings": [{ "name": "BOT", "class_name": "BotState" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["BotState"] }],
+
+  "observability": { "enabled": true }
+}

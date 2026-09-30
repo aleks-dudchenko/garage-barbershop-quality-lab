@@ -1,0 +1,1212 @@
+/* ==========================================================================
+   Garage Barbershop — збудовано за системою GBI Packaging
+   (джерело: GBI UKRAINE copy, вер. 14.09.2026)
+
+   Що взято повністю: світлий ґрунт із темними смугами, нейтраль в OKLCH,
+   ієрархія тексту через прозорість а не через колір, вага заголовків 500 із
+   leading 0.96, пігулки з бейджем-стрілкою, ease-out-expo, blur-fade, повна
+   відсутність тіней.
+   Кольору немає взагалі. У GBI --accent оголошений і не вжитий жодного разу,
+   у Garage акценту ніколи не було: стара палітра це #fff, #000 і #909090,
+   логотип на 100% #f0f0f0. Наголос робиться інверсією заливки.
+   Що замінено: TT Hoves на Onest, бо в GBI він ніде не підключений і
+   відвідувачі бачать Helvetica.
+
+   Перевернути ґрунт на темний = поміняти місцями --paper і --ink нижче.
+   ========================================================================== */
+
+:root {
+  /* Дробові картки (1.35 / 2.15 / 3.25, пропорції GBI): край наступної
+     видно, це і є підказка, що далі щось є. Стрічка виходить за колонку
+     праворуч до краю екрана, тож цей край не ріжеться межею колонки.
+     На телефоні було 1.12, і фото виходило 305×407, тобто майже все око.
+     На 1.35 воно 251×335, і край наступної картки видно помітніше. */
+  --card-w: calc((100% - 0.35 * 12px) / 1.35);
+  --card-gap: 12px;
+  --paper:     oklch(0.965 0.005 95);
+  --paper-2:   oklch(0.935 0.005 95);
+  --ink:       oklch(0.17 0.006 95);
+  --ink-2:     oklch(0.225 0.006 95);
+  /* Акценту немає навмисно. У Garage його ніколи не було (уся стара палітра —
+     #fff, #000, #909090), а в GBI --accent оголошений і не використовується
+     жодного разу. Наголос робиться інверсією заливки, не тоном. */
+
+  /* Ієрархія — прозорість від чорнила, як у GBI, а не окремі сірі. */
+  --on-paper:     oklch(0.17 0.006 95);
+  --on-paper-70:  oklch(0.17 0.006 95 / 0.68);
+  /* 0.62, не 0.5: на 13–14 px половинне чорнило давало 3,4:1, нижче AA. */
+  --on-paper-50:  oklch(0.17 0.006 95 / 0.62);
+  --line-paper:   oklch(0.17 0.006 95 / 0.14);
+
+  --on-ink:     oklch(0.965 0.005 95);
+  --on-ink-70:  oklch(0.965 0.005 95 / 0.68);
+  --on-ink-50:  oklch(0.965 0.005 95 / 0.5);
+  --line-ink:   oklch(0.965 0.005 95 / 0.18);
+
+  /* Google Sans з Google Fonts, кирилиця є. Onest був до 21.09.2026. */
+  --font: "Google Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --fs-hero:  clamp(2rem, 8.4vw, 5.75rem);
+  --fs-h2:    clamp(1.875rem, 1.35rem + 2.2vw, 3rem);
+  --fs-h3:    clamp(1.25rem, 1.1rem + 0.7vw, 1.5rem);
+  --fs-lead:  clamp(1rem, 0.96rem + 0.28vw, 1.1875rem);
+  --fs-base:  1rem;
+  --fs-sm:    0.875rem;
+  --fs-xs:    0.8125rem;
+
+  /* Поле від краю екрана: 16 / 36 / 40 / 60 (зміряно на prjctr.com). */
+  --gut: 16px;
+  /* Але колонка не тягнеться на всю ширину, як у prjctr: на 1440+ рядок
+     розповзався і між текстом та панеллю лишалась порожнеча. Стеля 1200 —
+     значення з першої версії, де відступи читались правильно. --pad далі
+     скрізь замість --gut: до 1200+2*gut працює поле, після — центрування. */
+  --content: 1200px;
+  --pad: max(var(--gut), calc((100vw - var(--content)) / 2));
+  /* Вертикаль прив'язана до висоти екрана: фіксовані 128px з'їдали 16%
+     ноутбучного екрана і лише 12% великого — від того й різне відчуття. */
+  --sec-pad: clamp(56px, 8.5vh, 128px);
+  --header-h: 84px;
+  --r-pill: 9999px;
+  --r-card: 24px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Єдиний кольоровий елемент на сайті: зірка рейтингу, за проханням клієнта. */
+  --star: oklch(0.83 0.17 84);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+/* Виділення тексту і скролбар теж частина системи: інверсія ґрунту, без синього. */
+::selection { background: var(--ink); color: var(--on-ink); }
+.band--ink ::selection, .hero ::selection, .site-footer ::selection, .booking ::selection { background: var(--on-ink); color: var(--ink); }
+.table-wrap { scrollbar-color: var(--line-paper) transparent; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--on-paper);
+  font-family: var(--font);
+  font-size: var(--fs-base);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg, iframe { display: block; max-width: 100%; }
+img { height: auto; }
+picture { display: block; }
+
+/* Вага 500 і тісний leading — підпис GBI. Не bold. */
+h1, h2, h3 { margin: 0; font-weight: 500; letter-spacing: -0.015em; text-wrap: balance; }
+h1 { font-size: var(--fs-hero); line-height: 0.96; letter-spacing: -0.025em; }
+h2 { font-size: var(--fs-h2); line-height: 0.98; letter-spacing: -0.022em; }
+h3 { font-size: var(--fs-h3); line-height: 1.15; }
+
+p { margin: 0; text-wrap: pretty; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+address { font-style: normal; }
+a { color: inherit; text-decoration: none; }
+button, a { -webkit-tap-highlight-color: transparent; }
+
+:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; border-radius: 4px; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+.skip { position: absolute; left: var(--pad); top: -100px; z-index: 100; padding: 14px 24px; background: var(--ink); color: var(--on-ink); font-weight: 500; border-radius: var(--r-pill); }
+.skip:focus { top: 16px; }
+
+/* ---------- Ґрунт і ритм ---------- */
+
+.band { padding-inline: var(--pad); }
+.band--ink { background: var(--ink); color: var(--on-ink); }
+.band--paper2 { background: var(--paper-2); }
+.band--pad { padding-block: var(--sec-pad); }
+
+.eyebrow { font-size: var(--fs-xs); font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--on-paper-50); }
+.band--ink .eyebrow { color: var(--on-ink-50); }
+
+.muted { color: var(--on-paper-70); }
+.band--ink .muted { color: var(--on-ink-70); }
+
+.lead { font-size: var(--fs-lead); line-height: 1.45; color: var(--on-paper-70); max-width: 47ch; }
+.band--ink .lead { color: var(--on-ink-70); }
+
+.rule { height: 1px; background: var(--line-paper); border: 0; margin: 0; }
+.band--ink .rule { background: var(--line-ink); }
+
+/* ---------- Кнопки ---------- */
+
+.btn {
+  position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+  border: 1px solid transparent; border-radius: var(--r-pill);
+  font: 500 var(--fs-base)/1 var(--font); white-space: nowrap; cursor: pointer;
+  transition: background-color 0.25s var(--ease), color 0.25s var(--ease), border-color 0.25s var(--ease), transform 0.18s var(--ease);
+}
+.btn:active { transform: scale(0.98); }
+.btn-pill { padding: 8px 8px 8px 24px; min-height: 52px; }
+.btn-pill-sm { padding: 6px 6px 6px 18px; min-height: 44px; font-size: var(--fs-sm); }
+.btn-plain { padding: 14px 24px; min-height: 48px; }
+.btn-block { width: 100%; }
+
+.btn-dark { background: var(--ink); color: var(--on-ink); }
+.btn-dark .btn-icon { background: var(--on-ink); color: var(--ink); }
+.btn-light { background: var(--paper); color: var(--ink); }
+.btn-light .btn-icon { background: var(--ink); color: var(--paper); }
+.btn-primary { background: var(--ink); color: var(--on-ink); }
+.btn-primary .btn-icon { background: var(--on-ink); color: var(--ink); }
+.band--ink .btn-primary, .hero .btn-primary { background: var(--on-ink); color: var(--ink); }
+.band--ink .btn-primary .btn-icon, .hero .btn-primary .btn-icon { background: var(--ink); color: var(--on-ink); }
+/* Шапка плаває над обома ґрунтами — перемикається тим самим прапорцем, що й логотип. */
+body[data-logo="light"] .header__cta { background: var(--on-ink); color: var(--ink); }
+body[data-logo="light"] .header__cta .btn-icon { background: var(--ink); color: var(--on-ink); }
+body[data-logo="dark"] .header__cta { background: var(--ink); color: var(--on-ink); }
+body[data-logo="dark"] .header__cta .btn-icon { background: var(--on-ink); color: var(--ink); }
+.btn-outline { background: transparent; border-color: color-mix(in oklch, currentColor 38%, transparent); }
+.btn-outline .btn-icon { background: currentColor; }
+.btn-outline .btn-icon svg { color: var(--paper); }
+.band--ink .btn-outline .btn-icon svg { color: var(--ink); }
+
+.btn-icon {
+  position: relative; display: flex; align-items: center; justify-content: center; flex: none;
+  width: 36px; height: 36px; border-radius: var(--r-pill); overflow: hidden;
+  transition: transform 0.35s var(--ease), background-color 0.25s var(--ease), color 0.25s var(--ease);
+}
+.btn-pill-sm .btn-icon { width: 32px; height: 32px; }
+.btn-icon svg { width: 16px; height: 16px; transition: transform 0.4s var(--ease), opacity 0.3s var(--ease); }
+.btn-icon svg + svg { position: absolute; transform: translate(-100%, 100%); opacity: 0; }
+
+@media (max-width: 639px) {
+  .btn-pill { padding: 15px 24px; width: 100%; }
+  .btn-pill .btn-icon { display: none; }
+}
+
+.btn-text { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; font-size: var(--fs-sm); min-height: 44px; }
+.btn-text > span:first-child {
+  background-image: linear-gradient(currentColor, currentColor); background-repeat: no-repeat;
+  background-size: 0% 1px; background-position: 0 100%; padding-bottom: 2px;
+  transition: background-size 0.4s var(--ease);
+}
+.btn-text-icon { position: relative; display: inline-flex; flex: none; overflow: hidden; width: 14px; height: 14px; }
+.btn-text-icon svg { width: 14px; height: 14px; transition: transform 0.4s var(--ease), opacity 0.3s; }
+.btn-text-icon svg + svg { position: absolute; inset: 0; transform: translate(-100%, 100%); opacity: 0; }
+
+@media (hover: hover) {
+  .btn-dark:hover { background: var(--ink-2); }
+  .btn-light:hover { background: #fff; }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-outline:hover { background: currentColor; }
+  .btn-outline:hover > span:first-child { color: var(--paper); }
+  .band--ink .btn-outline:hover > span:first-child { color: var(--ink); }
+  .btn:hover .btn-icon { transform: scale(1.1); }
+  .btn:hover .btn-icon svg:first-child { transform: translate(100%, -100%); opacity: 0; }
+  .btn:hover .btn-icon svg + svg { transform: translate(0, 0); opacity: 1; }
+  .btn-text:hover > span:first-child { background-size: 100% 1px; }
+  .btn-text:hover .btn-text-icon svg:first-child { transform: translate(100%, -100%); opacity: 0; }
+  .btn-text:hover .btn-text-icon svg + svg { transform: translate(0, 0); opacity: 1; }
+}
+
+/* ---------- Шапка: логотип міняється за ґрунтом секції під ним ---------- */
+
+.site-header { position: fixed; inset: 0 0 auto; top: var(--bar-offset, 0px); z-index: 60; padding: 16px var(--pad); pointer-events: none; }
+
+/* Смуга «зачинено» з 20:00 до 9:00 (ClosedBar). Світла на темному верху,
+   щоб її помітили. Стоїть у потоці над героєм і прокручується разом зі
+   сторінкою; шапка тримається під нею через --bar-offset, доки смуга не
+   сховається. До першого прорахунку відступ береться за висотою смуги. */
+.closed-bar { display: none; padding: 8px var(--pad); background: var(--paper); color: var(--ink); }
+html[data-closed] .closed-bar { display: block; }
+html[data-closed] { --bar-offset: 42px; }
+.closed-bar__inner { display: flex; align-items: center; justify-content: center; gap: 10px; }
+/* Місяць у темному колі, як значки в кнопках сайту: у смузі й у вікні дзвінка. */
+.moon-badge { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: var(--r-pill); background: var(--ink); color: var(--on-ink); }
+.moon-badge svg { width: 13px; height: 13px; display: block; }
+.closed-bar p { margin: 0; font-size: var(--fs-sm); font-weight: 500; line-height: 1.3; text-wrap: balance; }
+@media (max-width: 380px) { .closed-bar p { font-size: var(--fs-xs); } }
+
+.header__blur { position: fixed; inset: 0 0 auto; top: var(--bar-offset, 0px); height: 128px; z-index: 59; pointer-events: none; opacity: 0; transition: opacity 0.4s var(--ease); }
+body[data-scrolled="true"] .header__blur { opacity: 1; }
+.header__blur::before, .header__blur::after, .header__blur > span { content: ''; position: absolute; inset: 0; }
+.header__blur > span { -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 100%); mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 100%); }
+.header__blur::before { -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 25%, transparent 70%); mask-image: linear-gradient(to bottom, #000 0%, #000 25%, transparent 70%); }
+.header__blur::after { -webkit-backdrop-filter: blur(22px); backdrop-filter: blur(22px); -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 45%); mask-image: linear-gradient(to bottom, #000 0%, transparent 45%); }
+.header__inner { display: flex; align-items: center; gap: 8px; }
+.header__inner > * { pointer-events: auto; }
+
+/* min-height — щоб посилання «на початок» лишалось цілю 44px і там,
+   де знак меншає до 38px. */
+.brand { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; }
+/* Горизонтальна звʼязка: знак ліворуч, напис праворуч. Обидва — маски,
+   фарбуються currentColor, тож перемикаються разом із ґрунтом секції. */
+.brand__mark, .brand__word {
+  flex: none; background-color: currentColor;
+  transition: background-color 0.3s var(--ease);
+}
+.brand__mark {
+  /* пропорція знака 103 × 151.5 */
+  height: 46px; width: calc(46px * 103 / 151.5);
+  -webkit-mask: url(/img/logo-mark.svg) center / contain no-repeat;
+  mask: url(/img/logo-mark.svg) center / contain no-repeat;
+}
+.brand__word {
+  /* пропорція напису 101.9 × 33 */
+  height: 26px; width: calc(26px * 101.9 / 33);
+  -webkit-mask: url(/img/logo-word.svg) center / contain no-repeat;
+  mask: url(/img/logo-word.svg) center / contain no-repeat;
+}
+body[data-logo="light"] .brand { color: var(--on-ink); }
+body[data-logo="dark"]  .brand { color: var(--ink); }
+/* Підвал завжди на темному, незалежно від тону шапки. */
+.site-footer .brand, body[data-logo] .site-footer .brand { color: var(--on-ink); }
+
+/* Пігулка тепер на самому <nav>, а не на списку: усередині неї, як у GBI,
+   стоять і пункти, і номер, і кнопка запису. Раніше пігулкою був лише
+   список, а номер із кнопкою висіли поруч окремими плямами.
+
+   На телефоні пігулки немає: <nav> лишається, але без власного фону й
+   відступів, і всередині нього видно саму кнопку запису. Так кнопка живе
+   в одному вузлі на всіх ширинах, а не двома копіями посилання.
+
+   Порядок у рядку задає order, а не розмітка: слухавка потрібна останньою,
+   щоб стояти рівно з краю, а кнопка виїжджала ліворуч від неї. У розмітці
+   вона раніше, бо для клавіатури й читалки дзвінок має йти перед записом. */
+.nav { order: 2; margin-left: auto; display: flex; align-items: center; gap: 2px; }
+.nav__list { display: none; gap: 2px; }
+.nav__list li { position: relative; }
+.nav__list a { position: relative; z-index: 1; display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: var(--r-pill); color: oklch(0.965 0.005 95 / 0.75); font-size: var(--fs-sm); font-weight: 500; transition: background-color 0.25s var(--ease), color 0.25s var(--ease); }
+/* Підсвітка поточної секції: одна пігулка, що переїжджає між пунктами під
+   час прокрутки (layoutId у motion). Колір інвертується разом із ґрунтом. */
+.nav__pill { position: absolute; inset: 0; border-radius: var(--r-pill); background: oklch(1 0 0 / 0.16); pointer-events: none; }
+body[data-logo="dark"] .nav__pill { background: oklch(0 0 0 / 0.09); }
+.nav__list a.is-active { color: var(--on-ink); }
+body[data-logo="dark"] .nav__list a.is-active { color: var(--ink); }
+@media (hover: hover) { .nav__list a:hover { background: oklch(1 0 0 / 0.14); color: var(--on-ink); } }
+/* На світлій секції шапка інвертується цілком, не лише логотип: напівпрозора
+   темна пігулка на папері читалась як брудна пляма. Сам фон пігулки
+   вмикається з брейкпоінта 768, там же інвертується. */
+body[data-logo="dark"] .nav__list a { color: oklch(0.17 0.006 95 / 0.72); }
+@media (hover: hover) { body[data-logo="dark"] .nav__list a:hover { background: oklch(0 0 0 / 0.07); color: var(--ink); } }
+
+/* Кнопка всередині пігулки і видима завжди, як у GBI. Ховати її до
+   прокрутки більше не можна: пігулка міняла б ширину просто від скролу.
+   Висота 44px іде з .btn-pill-sm: на телефоні кнопка стоїть без пігулки,
+   поруч зі слухавкою, і має бути такою самою на дотик. */
+.header__cta { display: inline-flex; padding: 6px 16px; font-size: 0.8125rem; transition: background-color 0.25s var(--ease), color 0.25s var(--ease); }
+/* Поява й зникнення анімуються лише під час прокрутки (клас is-scrolling
+   ставить useHeaderTone). Коли стан міняється з іншої причини, кнопка
+   просто стає в нього: в Arc сторінка спершу розкладається ширшою за
+   768 px, де кнопка видима, потім звужується, і плавне згасання
+   виглядало як блимання. */
+html.is-scrolling .header__cta { transition: background-color 0.25s var(--ease), color 0.25s var(--ease), opacity 0.4s var(--ease), transform 0.4s var(--ease); }
+.header__cta .btn-icon { display: none; }
+/* До 768px пігулки немає, кнопка стоїть сама, і поки на екрані видно таку
+   саму в герої, вона просто повторює її вдруге. Тому там вона зʼявляється,
+   щойно кнопка героя пішла з екрана. Ховаємо за наявним прапорцем, а не за
+   його відсутністю: без скриптів кнопка лишається видимою.
+
+   Виходить вона знизу вгору разом із проявленням, тим самим рухом, що й
+   решта сайту: у Appear і в рядках плашки це те саме зміщення по вертикалі
+   на 8 px. Убік вона не їде: поруч край екрана, і горизонтальний зсув
+   читався як зрив. */
+/* Ховаємо з першого кадру, доки прапорець не скаже, що кнопки героя вже не
+   видно. Раніше ховали за прапорцем "on", а його ставить скрипт уже після
+   оживлення сторінки, тож на телефоні кнопка встигала мигнути й згаснути.
+   Клас js ставить скрипт у <head> до першого кадру; без скриптів його немає,
+   і кнопка видима, як і раніше. */
+.js body:not([data-hero-cta="off"]) .header__cta,
+body[data-hero-cta="on"] .header__cta { opacity: 0; transform: translateY(8px); pointer-events: none; }
+
+/* ---------- Герой: заморожена смуга під текстом ---------- */
+
+/* Флекс-колонка, а не absolute-вміст: якщо контент вищий за екран (маленький
+   телефон + висока панель вікон), герой росте, а не зрізає заголовок. */
+.hero { position: relative; min-height: 100svh; overflow: hidden; background: var(--ink); color: var(--on-ink); display: flex; flex-direction: column; justify-content: center; }
+.hero__media { position: absolute; inset: 0; }
+.hero__media picture, .hero__media img, .hero__video { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero__media img, .hero__video { object-fit: cover; object-position: 50% 50%; }
+/* Відео проявляється лише коли реально пішло — інакше замість постера чорна
+   дірка, як було на старому сайті. */
+.hero__video { opacity: 0; transition: opacity 0.9s var(--ease); }
+.hero__video.is-playing { opacity: 1; }
+
+/* Темний оверлей — той самий, що в першій версії: один шар ґрунту, без
+   backdrop-blur. Смуга блюру (прийом GBI) на цьому матеріалі давала сірий
+   серпанок унизу замість темряви, тому знята. */
+.hero__veil {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg,
+    oklch(0.17 0.006 95 / 0.34) 0%,
+    oklch(0.17 0.006 95 / 0.60) 42%,
+    oklch(0.17 0.006 95 / 0.96) 100%);
+}
+
+.hero__inner { position: relative; z-index: 1; width: 100%; display: flex; flex-direction: column; gap: 28px; padding: calc(var(--header-h) + 16px) var(--pad) clamp(20px, 3.5vh, 48px); }
+
+/* Телефон: заголовок, підзаголовок, кнопка на всю ширину, а під нею одним
+   рядком телефон ліворуч і оцінка праворуч. На широкому екрані порядок інший
+   (див. брейкпоінт нижче), тому зони іменовані, а не просто потік. */
+/* Одна розкладка на всі ширини: оцінка над заголовком, під текстом кнопка
+   і телефон в один рядок. Третя колонка на 1fr забирає вільне місце, щоб
+   пара тулилась до лівого краю, а не розтягувалась. */
+.hero__copy {
+  max-width: none;
+  display: grid;
+  justify-items: start;
+  grid-template-columns: auto auto 1fr;
+  column-gap: 20px;
+  grid-template-areas:
+    "proof proof proof"
+    "title title title"
+    "sub   sub   sub"
+    "cta   tel   .";
+}
+.hero__copy > h1 { grid-area: title; }
+/* Рядки заголовка проявляються на CSS, а не скриптом. Коли це робив
+   TextEffect, пререндер віддавав H1 з opacity: 0, і перший текст на
+   сторінці чекав, поки завантажаться й запустяться скрипти; без JS
+   заголовка не було взагалі. Рух той самий: прозорість, 20px знизу,
+   розмиття 12px, рядок за рядком. */
+@keyframes hero-line-in {
+  from { opacity: 0; transform: translateY(20px); filter: blur(12px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+.hero__line { display: block; animation: hero-line-in 0.6s var(--ease) both; }
+.hero__line:nth-child(1) { animation-delay: 0.06s; }
+.hero__line:nth-child(2) { animation-delay: 0.14s; }
+.hero__line:nth-child(3) { animation-delay: 0.22s; }
+/* Решта героя так само на CSS і в порядку читання: оцінка, заголовок,
+   підзаголовок, кнопка разом із телефоном. Раніше це робив скрипт, і все,
+   крім заголовка, лежало в розмітці з opacity: 0, поки не завантажиться JS;
+   до того ж оцінка над заголовком зʼявлялась уже після підзаголовка під ним.
+   Розмиття лишається тільки в заголовку, решта просто підіймається. Плашка
+   вікон іде разом із підзаголовком. */
+@keyframes rise-in { from { opacity: 0; transform: translateY(12px); } }
+.hero__proof-line, .hero__sub, .hero__cta, .hero__tel-wrap, .hero__slots { animation: rise-in 0.5s var(--ease) both; }
+.hero__sub { animation-delay: 0.3s; }
+.hero__cta, .hero__tel-wrap { animation-delay: 0.4s; }
+.hero__slots { animation-duration: 0.6s; animation-delay: 0.34s; }
+/* На телефоні рядків два: «барбершоп Ірпеня.» стають в один. Робимо
+   це CSS, а не другим набором рядків у скрипті, щоб розмітка на сервері
+   й у браузері була однакова і заголовок не перебудовувався на льоту. */
+@media (max-width: 767.98px) {
+  .hero__line:nth-child(n + 2) { display: inline-block; }
+  .hero__line:nth-child(3) { animation-delay: 0.14s; }
+  /* На телефоні плашка стоїть під кнопкою, тож і виходить після неї. */
+  .hero__slots { animation-delay: 0.48s; }
+}
+.hero__sub { grid-area: sub; margin-top: 20px; max-width: 40ch; font-size: var(--fs-lead); line-height: 1.42; color: var(--on-ink-70); }
+.hero__cta { grid-area: cta; margin-top: 24px; }
+.hero__tel-wrap { grid-area: tel; margin-top: 24px; align-self: center; }
+.hero__proof-line { grid-area: proof; margin: 0 0 16px; }
+/* Дуже вузькі екрани: кнопка й телефон в один рядок уже не стають, тому
+   телефон іде під кнопку, а не ріжеться. */
+@media (max-width: 359px) {
+  .hero__copy {
+    grid-template-columns: 1fr;
+    grid-template-areas: "proof" "title" "sub" "cta" "tel";
+  }
+  .hero__cta { width: 100%; }
+  .hero__cta .btn { width: 100%; }
+  .hero__tel-wrap { width: 100%; margin-top: 12px; }
+}
+.hero__proof { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: var(--fs-sm); color: var(--on-ink-70); }
+.hero__proof strong { color: var(--on-ink); font-size: var(--fs-base); font-weight: 600; }
+.hero__star { color: var(--star); }
+.hero__star svg, .barber__star svg { width: 14px; height: 14px; display: block; }
+.link-arrow { display: inline-block; width: 14px; height: 14px; vertical-align: -2px; margin-left: 2px; }
+
+/* ---------- Панель вільних вікон ---------- */
+
+/* Скло навмисно прозоре, без розмиття: відео крізь плашку видно, так вона
+   подобається більше, а текст читається й так. Розмиття тут і раніше не
+   працювало, його глушив фільтр на обгортці від анімації появи. */
+.slots { border-radius: var(--r-card); border: 1px solid var(--line-ink); background: oklch(0.17 0.006 95 / 0.55); padding: 20px; display: grid; gap: 16px; }
+/* Колонка не ширша за саму плашку. Перемикач послуг це fieldset, а його
+   браузер за замовчуванням не стискає нижче за вміст (min-inline-size:
+   min-content), тож до 370 px він розпирав колонку: на 360 px поле справа
+   було 6 px замість 20, на 320 px «Борода», «найближчі» й ціни різались
+   краєм екрана. */
+.slots { grid-template-columns: minmax(0, 1fr); }
+.slots[hidden] { display: none; }
+.slots__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.slots__title { font-size: var(--fs-h3); font-weight: 500; white-space: nowrap; }
+.slots__meta { font-size: var(--fs-sm); color: var(--on-ink-50); white-space: nowrap; }
+
+.seg { display: flex; gap: 2px; margin: 0; padding: 4px; border: 0; border-radius: var(--r-pill); background: oklch(0 0 0 / 0.35); min-width: 0; }
+/* Ширина за текстом плюс рівна частка решти: «Комплекс» довший за «Дитяча»,
+   і з четвертою послугою рівні частки вже не вміщали його на телефоні. */
+.seg__item { flex: 1 1 auto; }
+.seg__item input { position: absolute; opacity: 0; width: 0; height: 0; }
+.seg__item span { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 8px; border-radius: var(--r-pill); font-size: var(--fs-sm); font-weight: 500; color: var(--on-ink-50); text-align: center; line-height: 1.2; cursor: pointer; transition: background-color 0.25s var(--ease), color 0.25s var(--ease); }
+.seg__item input:checked + span { background: oklch(1 0 0 / 0.14); color: var(--on-ink); }
+html[data-input="keyboard"] .seg__item input:focus-visible + span { outline: 2px solid currentColor; outline-offset: -2px; }
+/* Вужчі поля на телефоні стоять після основного правила. Раніше вони
+   стояли перед ним і програвали, тож обіцяні 5 px не діяли ніколи. */
+@media (max-width: 380px) { .seg__item span { padding: 0 3px; } }
+/* 320–359 px (iPhone SE, mini і будь-який iPhone зі збільшеним масштабом
+   інтерфейсу): чотири назви в один ряд стають лише кеглем 12 px і з полем
+   плашки 16 px замість 20. Чіпи гортаються до самої рамки, тож їхній
+   відступ іде за полем. */
+@media (max-width: 359px) {
+  .slots { padding: 16px; }
+  .slots .chips { margin-inline: -16px; padding-inline: 16px; }
+  .seg__item span { font-size: 0.75rem; }
+}
+
+.slots__list { display: grid; gap: 18px; }
+.master-row { display: grid; gap: 10px; }
+/* Рядок майстра як у віджеті Altegio: фото, імʼя з рівнем і рейтингом, ціна. */
+.master-row__head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; }
+.master-row__avatar { width: 44px; height: 44px; border-radius: var(--r-pill); object-fit: cover; background: var(--ink-2); flex: none; }
+.master-row__who { display: grid; gap: 2px; min-width: 0; }
+.master-row__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-size: var(--fs-sm); line-height: 1.25; color: var(--on-ink-50); }
+.master-row__rating { display: inline-flex; align-items: center; gap: 4px; color: var(--on-ink-70); font-variant-numeric: tabular-nums; }
+.master-row__rating svg { width: 12px; height: 12px; color: var(--star); }
+.master-row__reviews { color: var(--on-ink-50); }
+.master-row__reviews::before { content: '·'; margin: 0 4px 0 0; }
+/* Імʼя і рядок під ним читаються як одне ціле, тому leading тут тісний.
+   Успадковані від body 1.55 давали по 2,5 px повітря згори й знизу кожного
+   рядка, і зазор виглядав утричі більшим за задані в gap 2 px. */
+.master-row__name { font-weight: 500; line-height: 1.2; }
+/* Позначка для того, кого тут обирали минулого разу. Без рамки й підкладки:
+   вона стоїть у рядку з рівнем і не повинна додати рядку жодного пікселя.
+   Виділяється тим, що яскравіша за сусідів, а не тим, що більша. */
+/* Позначка «свого» майстра. Звичайним текстом вона губилась серед решти
+   підписів, а це єдине в плашці, що стосується особисто цього відвідувача.
+   Але й суцільної світлої заливки тут бути не може: так у цій самій плашці
+   виглядає чіп найближчого вікна, і два різні змісти одним прийомом
+   читаються гірше обидва. Тому пігулка є, а заливка приглушена. */
+.master-row__mine {
+  display: inline-flex; align-items: center;
+  padding: 2px 9px; border-radius: var(--r-pill);
+  background: oklch(1 0 0 / 0.14); color: var(--on-ink);
+  font-size: var(--fs-xs); font-weight: 500; line-height: 1.35;
+  white-space: nowrap;
+}
+.master-row__role { color: var(--on-ink-50); }
+.master-row__price { margin-left: auto; font-size: var(--fs-sm); color: var(--on-ink-70); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.master-row__empty { font-size: var(--fs-sm); color: var(--on-ink-50); }
+/* Коли порожньо в усіх майстрів, замість трьох однакових рядків «вікон
+   немає» стоїть одне пояснення. Дихає більше за рядок, бо в цей момент це
+   єдиний вміст плашки. */
+.slots__busy { padding: 10px 0 2px; max-width: 34ch; font-size: var(--fs-sm); line-height: 1.5; color: var(--on-ink-70); }
+
+.chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-inline: -20px; padding-inline: 20px; }
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: 0 0 auto; scroll-snap-align: start; min-width: 76px; min-height: 46px; padding: 4px 14px;
+  display: grid; align-content: center; justify-items: center; gap: 1px;
+  border: 1px solid var(--line-ink); border-radius: var(--r-pill);
+  background: oklch(1 0 0 / 0.06); color: var(--on-ink);
+  font: 600 var(--fs-base)/1.1 var(--font); font-variant-numeric: tabular-nums; cursor: pointer;
+  transition: background-color 0.25s var(--ease), border-color 0.25s var(--ease), color 0.25s var(--ease), transform 0.18s var(--ease);
+}
+/* 11px, а не 10: це функціональний підпис (день вікна), великими літерами
+   з трекінгом, і на 10px на телефоні він уже читався з зусиллям. */
+.chip small { font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--on-ink-50); }
+.chip--nearest { background: var(--on-ink); border-color: var(--on-ink); color: var(--ink); }
+.chip--nearest small { color: oklch(0.17 0.006 95 / 0.6); }
+.chip--more { background: transparent; color: var(--on-ink-50); }
+.chip:active { transform: scale(0.97); }
+@media (hover: hover) {
+  .chip:hover { border-color: var(--on-ink); }
+  .chip--nearest:hover { opacity: 0.9; }
+  .chip--more:hover { color: var(--on-ink); }
+}
+.slots__rest a, .slots__foot a { display: inline-flex; align-items: center; min-height: 44px; color: var(--on-ink-50); }
+@media (hover: hover) { .slots__rest a:hover, .slots__foot a:hover { color: var(--on-ink); } }
+
+.sk { display: block; border-radius: var(--r-pill); background: oklch(1 0 0 / 0.08); position: relative; overflow: hidden; }
+.sk::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, oklch(1 0 0 / 0.08), transparent); transform: translateX(-100%); animation: sk 1.4s infinite; }
+/* Заглушка повторює рядок до пікселя: кружок аватарки на 44 px задає
+   висоту так само, як справжнє фото. Без нього кожна заглушка була на 29 px
+   нижча, і плашка підростала, щойно приходили вікна. */
+.sk--avatar { width: 44px; height: 44px; }
+.sk--name { width: 118px; height: 15px; border-radius: 4px; }
+.sk--price { width: 54px; height: 13px; margin-left: auto; border-radius: 4px; }
+.sk--chip { width: 76px; height: 46px; flex: 0 0 auto; }
+@keyframes sk { to { transform: translateX(100%); } }
+.slots[data-state="ready"] .is-skeleton { display: none; }
+/* На низьких екранах майстрів у плашці двоє (maxMasters у SlotsPanel), тож
+   і заглушок дві з першого кадру, ще до того, як скрипт це порахує. */
+@media (max-height: 699.98px) { .slots__list > .is-skeleton:nth-child(n + 3) { display: none; } }
+
+/* ---------- Секції ---------- */
+
+.sec { padding-block: var(--sec-pad); }
+/* Перехід з меню ставив верх розділу під верх екрана, і перший рядок
+   лягав на висоті свого поля, 76 px при екрані 900: під шапкою (88 px) і в
+   смузі блюру (128 px), тож заголовок «Прайс» читався розмитим. Тепер
+   перший рядок стає на 136 px, одразу під смугою. */
+.sec { scroll-margin-top: max(0px, calc(136px - var(--sec-pad))); }
+
+/* Поява при прокрутці (Reveal). Блок видимий у розмітці, а ховаємо його лише
+   під класом js, який ставить index.html, тож без скриптів сторінка повна.
+   Кінцевий стан без жодного filter: навіть blur(0px) робить блок окремим
+   шаром і глушить backdrop-filter усередині. */
+.reveal {
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), filter 0.6s var(--ease);
+  transition-delay: var(--reveal-delay, 0s);
+}
+.js .reveal:not(.is-in):not(.reveal--list) { opacity: 0; transform: translateY(18px); }
+.js .reveal--blur:not(.is-in) { filter: blur(8px); }
+/* Списки: сам блок стоїть, пункти приходять по черзі з кроком 30 мс, без
+   розмиття. Номер пункту (--i) обрізаний на шостому, див. staggerIndex. */
+/* .stagger-item: те, що стоїть у списковому блоці поза самим списком
+   (пігулки рівнів над прайсом, шапка таблиці, лічильник і стрілки
+   каруселі), іде в ту саму чергу зі своїм номером. Без цього воно було
+   видно ще до появи, і пігулки стояли на місці раніше за заголовок. */
+.stagger > *, .stagger-item {
+  transition: opacity 0.45s var(--ease), transform 0.45s var(--ease);
+  transition-delay: calc(var(--reveal-delay, 0s) + var(--i, 0) * 30ms);
+}
+.js .reveal:not(.is-in) .stagger > *,
+.js .reveal.stagger:not(.is-in) > *,
+.js .reveal:not(.is-in) .stagger-item { opacity: 0; transform: translateY(10px); }
+/* Рядки таблиці лише проявляються: зсув рядка смикав би липку клітинку. */
+.js .reveal:not(.is-in) .stagger--fade > *,
+.js .reveal:not(.is-in) .stagger-item--fade { transform: none; }
+.sec__head { max-width: 46rem; }
+.sec__head .eyebrow + h2 { margin-top: 20px; }
+.sec__head h2 + .lead { margin-top: 14px; }
+/* Між шапкою секції і таблицею було 38px — замало, щоб вони читались окремо. */
+.sec__head + .table-wrap { margin-top: clamp(36px, 5.5vh, 72px); }
+/* Службовий рядок під секцією. Без max-width на сторінці він розтягувався
+   на 223 символи при 1920. */
+.section__foot { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px; }
+.section__note { margin: 0; font-size: var(--fs-sm); color: var(--on-paper-50); }
+.band--ink .section__foot { color: var(--on-ink-50); }
+
+/* ---------- Прайс: таблиця ---------- */
+
+/* На вузькому екрані гортається вбік, перша колонка лишається на місці. */
+.table-wrap { overflow-x: auto; scrollbar-width: thin; margin-inline: calc(var(--pad) * -1); padding-inline: var(--pad); }
+.price-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.price-table th, .price-table td { padding: 17px 18px; text-align: right; white-space: nowrap; font-size: 1.0625rem; }
+/* Крайні клітинки без бічного поля: таблиця стоїть рівно в межі колонки. */
+.price-table th:first-child, .price-table td:first-child { padding-left: 0; }
+.price-table th:last-child,  .price-table td:last-child  { padding-right: 0; }
+.price-table thead th {
+  font-size: var(--fs-xs); font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--on-paper-50); border-bottom: 1px solid var(--line-paper);
+}
+.price-table tbody th {
+  position: sticky; left: 0; z-index: 1; background: var(--paper-2);
+  text-align: left; font-weight: 400; white-space: normal; min-width: 190px; color: var(--on-paper-70);
+}
+.price-table thead th:first-child { text-align: left; }
+.price-table tbody tr { border-bottom: 1px solid var(--line-paper); }
+.price-table tbody tr:last-child { border-bottom: 0; }
+.price-table td { font-weight: 500; }
+/* Ховер у прайсі: смуга рівно між лініями рядка, від краю до краю.
+   Раніше фон стояв на клітинках, а перша з них липка і має власний фон, тому
+   підсвітка читалась як окремі плями; та сама клітинка ще й їхала на 6px
+   разом із фоном, і смуга розривалась. Тепер фон однаковий на всіх
+   клітинках рядка, включно з липкою, а їде тільки назва всередині неї.
+   Колір світліший за фон секції, тож рядок ніби підводиться. */
+@media (hover: hover) {
+  .price-table tbody th,
+  .price-table tbody td { transition: background-color 0.25s var(--ease); }
+  .price-table__name { display: inline-block; transition: transform 0.35s var(--ease); }
+  .price-table tbody tr:hover th,
+  .price-table tbody tr:hover td { background: var(--paper); }
+  .price-table tbody tr:hover .price-table__name { transform: translateX(6px); }
+}
+
+/* Прайс на телефоні: одна колонка «від …». */
+.price-list { margin: 0; padding: 0; list-style: none; }
+.price-list__row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 15px 0; border-bottom: 1px solid var(--line-paper); font-size: 1.0625rem; }
+.price-list__row span { color: var(--on-paper-70); }
+.price-list__row strong { font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; animation: price-in 0.3s var(--ease); }
+@keyframes price-in { from { opacity: 0; transform: translateY(4px); } }
+/* Рівні над мобільним прайсом: чотири окремі пігулки в один ряд, обраний
+   рівень залитий чорнилом, як кнопки на сайті. Сіра доріжка з плашки вікон
+   на світлому ґрунті читалась важко. Поле зверху, щоб кільце фокуса не
+   обрізав .table-wrap, який гортається вбік. */
+.levels { display: flex; gap: 6px; margin: 0; padding: 4px 0 0; border: 0; min-width: 0; }
+.levels__item { flex: 1 1 auto; display: flex; }
+.levels__item input { position: absolute; opacity: 0; width: 0; height: 0; }
+.levels__item span {
+  flex: 1; display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 0 10px;
+  border: 1px solid oklch(0.17 0.006 95 / 0.2); border-radius: var(--r-pill);
+  font-size: var(--fs-sm); font-weight: 500; color: var(--on-paper-70); white-space: nowrap; cursor: pointer;
+  transition: background-color 0.25s var(--ease), color 0.25s var(--ease), border-color 0.25s var(--ease);
+}
+.levels__item input:checked + span { background: var(--ink); border-color: var(--ink); color: var(--on-ink); }
+html[data-input="keyboard"] .levels__item input:focus-visible + span { outline: 2px solid var(--ink); outline-offset: 2px; }
+@media (hover: hover) { .levels__item input:not(:checked) + span:hover { border-color: oklch(0.17 0.006 95 / 0.45); color: var(--on-paper); } }
+/* На 320px чотири пігулки інакше не стають в один ряд. */
+@media (max-width: 359px) { .levels__item span { padding: 0 7px; font-size: var(--fs-xs); } }
+.levels + .price-list { margin-top: 16px; border-top: 1px solid var(--line-paper); }
+/* Обидва варіанти прайсу є в розмітці з пререндера, показує потрібний CSS:
+   на телефоні рівні перемикачем і одна колонка, з 768px повна таблиця.
+   Коли вибирав скрипт, на телефоні до його завантаження стояла широка
+   таблиця і потім стрибком мінялась на список. */
+@media (min-width: 768px) { .price-narrow { display: none; } }
+@media (max-width: 767.98px) {
+  .price-wide { display: none; }
+  .sec__head + .table-wrap { margin-top: 20px; }
+}
+
+/* ---------- Майстри: карусель за каталогом GBI ---------- */
+
+.carousel { margin-top: clamp(24px, 4vh, 48px); }
+/* Дробова кількість карток — видно край наступної, це підказує, що можна гортати. */
+/* Без CSS-снапу: він сварився з доводкою в JS, браузер тягнув до своєї
+   межі, скрипт до своєї, від того картки й сіпались.
+   Ліворуч стрічка починається в колонці, праворуч виходить до краю екрана:
+   картки за лівою межею ховаються, а край наступної праворуч видно цілком.
+   Відсотки ширини карток рахуються від контент-боксу, тобто від колонки,
+   тож 3.25 картки лягають саме в неї, а не в розширений контейнер. */
+/* Стрічка виходить за колонку праворуч до краю екрана, щоб край наступної
+   картки не різався межею колонки. */
+/* overflow-y: hidden, а не visible: поруч із overflow-x: auto браузер
+   підміняє visible на auto, і стрічка стає ще й вертикальним контейнером
+   прокрутки. Палець тоді веде її по діагоналі, і від бічного гортання
+   сторінка сама відʼїжджає вгору-вниз. */
+.carousel__viewport { overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scrollbar-width: none; -ms-overflow-style: none; cursor: grab; margin-right: calc(var(--pad) * -1); }
+.carousel__viewport::-webkit-scrollbar { display: none; }
+.carousel__viewport.is-dragging { cursor: grabbing; }
+.carousel__track { display: flex; gap: var(--card-gap, 12px); }
+.carousel__track > * { flex: 0 0 var(--card-w); }
+/* Розпірка в кінці стрічки, а не padding-right на контейнері: кінцеве поле
+   флекс-контейнера браузер не враховує в scrollWidth, тому остання картка
+   докручувалась до самого краю екрана замість межі колонки. */
+.carousel__track::after { content: ""; flex: 0 0 calc(var(--pad) - var(--card-gap, 12px)); }
+
+.barber__card { display: block; }
+/* Легке заокруглення, 8px: гострий кут на великій картці читався як
+   обрізаний край, а не як рішення. Далі за системою не йдемо, бо 24px це
+   радіус великих карток і плашок, а тут фото, не контейнер. */
+.barber__frame { position: relative; display: block; overflow: hidden; border-radius: 8px; background: var(--paper-2); aspect-ratio: 3 / 4; }
+.band--paper2 .barber__frame { background: var(--paper); }
+.barber__photo { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s var(--ease); -webkit-user-drag: none; user-select: none; }
+/* Майстра щойно додали з телеграма і фото ще немає: плитка з ініціалами
+   замість битої картинки. Той самий ґрунт, що й у решти карток. */
+.barber__photo--empty {
+  display: flex; align-items: center; justify-content: center;
+  background: var(--ink-2); color: var(--on-ink-50);
+  font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 500; letter-spacing: -0.02em;
+}
+.barber__level {
+  position: absolute; left: 12px; top: 12px; padding: 5px 12px; border-radius: var(--r-pill);
+  background: oklch(0.17 0.006 95 / 0.72); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--on-ink-70);
+}
+.barber__level--top { color: var(--on-ink); }
+.barber__body { display: block; padding-top: 16px; }
+/* Той самий тісний leading, що й у рядках панелі: пара «імʼя плюс рівень»
+   усюди на сайті має триматись як один блок, а не як два абзаци. */
+.barber__name { display: flex; align-items: center; gap: 8px; font-size: 1.125rem; font-weight: 500; line-height: 1.2; letter-spacing: -0.01em; }
+/* По центру, а не по базовій лінії: svg зірки має display: block, тому його
+   базовою лінією стає нижній край, і по базовій вона висла на ~2px вище цифр.
+   У герої й у плашці слотів те саме місце завжди було по центру. */
+.barber__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0 7px; margin-top: 4px; font-size: var(--fs-sm); line-height: 1.25; color: var(--on-paper-50); font-variant-numeric: tabular-nums; }
+.barber__meta strong { color: var(--on-paper-70); font-weight: 500; }
+.barber__rate { display: inline-flex; align-items: center; gap: 7px; }
+/* Ціна стрижки цього рівня, тим самим рядком що й оцінка, через крапку.
+   Крапка на псевдоелементі, а не окремим вузлом: коли рядок не влазить у
+   вузьку картку, вона переноситься разом із ціною, а не висить у кінці. */
+.barber__price { color: var(--on-paper-70); font-variant-numeric: tabular-nums; }
+.barber__price::before { content: "·"; margin-right: 7px; color: var(--on-paper-50); }
+.barber__star { color: var(--star); }
+
+.carousel__foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: clamp(20px, 3vh, 32px); padding-top: 20px; border-top: 1px solid var(--line-paper); }
+.carousel__count { display: inline-flex; align-items: center; min-height: 44px; font-size: var(--fs-sm); letter-spacing: 0.16em; color: var(--on-paper-50); font-variant-numeric: tabular-nums; }
+.carousel__nav { display: flex; gap: 8px; }
+.btn-round {
+  display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px;
+  border: 1px solid var(--line-paper); border-radius: var(--r-pill); background: transparent; color: inherit; cursor: pointer;
+  transition: background-color 0.25s var(--ease), color 0.25s var(--ease), border-color 0.25s var(--ease), transform 0.18s var(--ease);
+}
+.btn-round svg { width: 16px; height: 16px; }
+.btn-round:disabled { pointer-events: none; opacity: 0.3; }
+.btn-round:active { transform: scale(0.94); }
+@media (hover: hover) {
+  .btn-round:hover { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
+  .barber:hover .barber__photo { transform: scale(1.06); }
+  .barber:hover .btn-text-icon svg:first-child { transform: translate(100%, -100%); opacity: 0; }
+  .barber:hover .btn-text-icon svg + svg { transform: translate(0, 0); opacity: 1; }
+}
+
+/* ---------- Про нас ---------- */
+
+.about { display: grid; gap: 40px; }
+.about__text { display: grid; justify-items: start; gap: 20px; }
+/* Роботи майстрів: шість останніх постів з Instagram. На телефоні й
+   планшеті стрічка з прокруткою вбік, що виходить за колонку до краю
+   екрана, як у майстрів; з 1024px шість в один ряд, без прокрутки.
+   Розпірка в кінці, а не кінцеве поле: поле флекс-контейнера не входить у
+   ширину прокрутки. */
+.works__viewport { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; margin-right: calc(var(--pad) * -1); }
+.works__viewport::-webkit-scrollbar { display: none; }
+.works__track { display: flex; gap: 12px; }
+.works__track > li { flex: 0 0 calc((100% - 1.3 * 12px) / 2.3); }
+.works__track::after { content: ""; flex: 0 0 calc(var(--pad) - 12px); }
+/* Плитка вертикальна 3:4, як сітка самого Instagram, заокруглення 8px, як у
+   фото майстрів. Ледь чорнильна підкладка видна, поки фото вантажиться. */
+.works__tile { position: relative; display: block; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 8px; background: oklch(0.17 0.006 95 / 0.06); }
+/* picture блоком на всю плитку, інакше висота 100% у img ні до чого не
+   прив'язана, і відео 9:16 та квадратні пости вилазили з 3:4. */
+.works__tile picture { display: block; height: 100%; }
+.works__tile img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--ease); }
+/* Відео позначене в куті: відтворюється воно вже в Instagram. */
+.works__play { position: absolute; top: 8px; right: 8px; display: grid; place-items: center; width: 26px; height: 26px; border-radius: var(--r-pill); background: oklch(0.17 0.006 95 / 0.55); color: var(--on-ink); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.works__play svg { width: 12px; height: 12px; }
+@media (hover: hover) { .works__tile:hover img { transform: scale(1.04); } }
+@media (prefers-reduced-motion: reduce) { .works__tile img { transition: none; } }
+
+/* ---------- Часті питання ---------- */
+
+/* Заголовок ліворуч, питання праворуч, як у контактах нижче; до 1024px одне
+   під одним. Питання розділені тими самими лініями, що й рядки прайсу. */
+.faq { display: grid; gap: clamp(24px, 4vh, 48px); }
+.faq__list { border-top: 1px solid var(--line-paper); interpolate-size: allow-keywords; }
+.faq__item { border-bottom: 1px solid var(--line-paper); }
+.faq__q {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  padding-block: 20px; cursor: pointer; list-style: none;
+  font-size: var(--fs-h3); font-weight: 500; line-height: 1.2; letter-spacing: -0.01em;
+  -webkit-tap-highlight-color: transparent;
+  transition: padding-bottom 0.45s var(--ease);
+}
+.faq__q::-webkit-details-marker { display: none; }
+/* Кружок як у стрілок каруселі. Відкрите питання заливає його чорнилом, а
+   плюс стає мінусом: вертикальна риска лягає горизонтально. */
+.faq__icon {
+  flex: none; display: grid; place-items: center; width: 36px; height: 36px;
+  border: 1px solid var(--line-paper); border-radius: var(--r-pill);
+  transition: background-color 0.25s var(--ease), color 0.25s var(--ease), border-color 0.25s var(--ease);
+}
+.faq__icon svg { width: 16px; height: 16px; }
+.faq__icon path + path { transform-box: fill-box; transform-origin: center; transition: transform 0.45s var(--ease); }
+/* data-closing ставить скрипт у Safari на час анімації закриття: питання й
+   кружок вертаються одразу, разом із висотою, а не після неї. */
+.faq__item[open]:not([data-closing]) .faq__q { padding-bottom: 8px; }
+.faq__item[open]:not([data-closing]) .faq__icon { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
+.faq__item[open]:not([data-closing]) .faq__icon path + path { transform: rotate(90deg); }
+@media (hover: hover) {
+  .faq__q:hover .faq__icon { background: var(--ink); color: var(--on-ink); border-color: var(--ink); }
+}
+/* Верхні 4px відповіді не дають обрізати кільце фокуса на посиланні в
+   першому рядку: під час розгортання вміст обрізаний по висоті.
+   Поле по вертикалі на абзаці, а не на .faq__a: у Safari висоту .faq__a
+   анімує скрипт (FaqSection), і з полем на ній самій блок не міг
+   стиснутись нижче за 28 px, тож наприкінці закриття стрибав. */
+.faq__a { transition: opacity 0.35s var(--ease); }
+.faq__item:not([open]) .faq__a { opacity: 0; }
+@starting-style { .faq__item[open] .faq__a { opacity: 0; } }
+.faq__a p { max-width: 56ch; padding: 4px 0 24px; font-size: var(--fs-lead); line-height: 1.5; color: var(--on-paper-70); }
+/* Посилання у відповіді підкреслені завжди: кольором їх тут не виділиш,
+   акценту на сайті немає. */
+.faq__a a {
+  color: var(--on-paper); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px;
+  text-decoration-color: color-mix(in oklch, currentColor 45%, transparent);
+  transition: text-decoration-color 0.25s var(--ease);
+}
+.faq__tel { white-space: nowrap; }
+@media (hover: hover) { .faq__a a:hover { text-decoration-color: currentColor; } }
+/* Відповідь розгортається по висоті там, де браузер уміє анімувати до auto;
+   решта відкриває її одразу. Правило окреме: у спільному списку селекторів
+   браузер без ::details-content викинув би й сусідів. */
+.faq__item::details-content {
+  block-size: 0; overflow-y: clip;
+  transition: block-size 0.45s var(--ease), content-visibility 0.45s allow-discrete;
+}
+.faq__item[open]::details-content { block-size: auto; }
+@media (min-width: 640px) {
+  /* Відповідь не заходить під кружок: 36px кружка і 24px проміжку. */
+  .faq__a { padding-right: 60px; }
+}
+@media (min-width: 1024px) {
+  .faq { grid-template-columns: 1fr 1.2fr; gap: 64px; align-items: start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .faq__q, .faq__icon path + path { transition: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .faq__item::details-content { transition: none; }
+}
+
+/* ---------- Контакти ---------- */
+
+.contacts { display: grid; gap: 40px; }
+.contacts__info { display: grid; justify-items: start; gap: 12px; align-content: start; }
+.contacts__info h2 { margin-bottom: 4px; }
+/* Блоки під заголовком: щільно, підпис над значенням, без повітря між ними. */
+.contacts__blocks { display: grid; gap: 14px; margin-top: 12px; }
+.contacts__block { display: grid; gap: 0; }
+.contacts__label { font-size: var(--fs-xs); font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--on-ink-50); margin-bottom: 2px; }
+.contacts__block p { margin: 0; font-size: var(--fs-lead); line-height: 1.35; display: flex; flex-wrap: wrap; gap: 0 20px; }
+.contacts__block p a { display: inline-flex; align-items: center; min-height: 32px; }
+.contacts__map { position: relative; border-radius: var(--r-card); overflow: hidden; border: 1px solid var(--line-ink); }
+/* Темна карта через інверсію, але світліша за першу спробу, щоб підписи читались. */
+/* Темна карта під колір секції. Спершу знебарвлюємо, аж потім інвертуємо:
+   так помаранчеві й сині піктограми Google не лишаються кольоровими плямами
+   на темному. Sepia наприкінці повертає теплий тон чорнила.
+   Це тимчасове рішення: фільтр б'є по всьому однаково, тому мітка сіріє
+   разом із картою, а картку Google зверху не прибрати. Справжній стиль
+   вимагає ключа, з ним можна вимкнути піктограми зовсім. */
+.contacts__map iframe { width: 100%; height: 300px; border: 0; display: block; filter: grayscale(1) invert(0.93) brightness(0.86) contrast(1.06) sepia(0.18); }
+
+/* ---------- Підвал ---------- */
+
+.site-footer { padding-block: 32px; font-size: var(--fs-sm); color: var(--on-ink-50); }
+/* На телефоні: бренд, під ним навігація і соцмережі поруч, потім підпис.
+   Чотири рядки по 44px із проміжком 24 читались як розсипаний список. */
+/* На телефоні у футері лишається тільки бренд і підпис розробника.
+   Навігація й соцмережі тут дублювали меню та контакти вище, і футер
+   читався як розсипаний список замість завершення сторінки. */
+.footer__inner { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 24px; }
+.footer__nav, .footer__social { flex-wrap: wrap; gap: 0 24px; display: none; }
+.footer__nav a, .footer__social a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; }
+@media (hover: hover) { .footer__nav a:hover, .footer__social a:hover { color: var(--on-ink); } }
+.footer__credit { display: flex; align-items: center; gap: 10px; margin: 0; justify-self: end; }
+/* Посилання завширшки рівно зі знаком, а зона дотику 44px винесена в
+   псевдоелемент. Бокс на 44px лишав порожні 20px праворуч від знака, і
+   підпис не доходив до краю колонки. */
+.footer__credit a { position: relative; display: inline-flex; align-items: center; }
+.footer__credit a::after { content: ""; position: absolute; inset: -10px; }
+/* Білий одразу. Приглушеним він читався як вимкнений, а відгук на ховер
+   лишається на підписі поруч. */
+.footer__credit img { opacity: 1; }
+.footer__credit span { transition: color 0.25s var(--ease); }
+@media (hover: hover) { .footer__credit:hover span { color: var(--on-ink); } }
+
+/* ---------- Оверлей запису ---------- */
+
+.booking { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: var(--ink); color: var(--on-ink); }
+.booking[open] { display: flex; flex-direction: column; }
+.booking::backdrop { background: oklch(0 0 0 / 0.7); }
+.booking__bar { display: flex; align-items: center; gap: 16px; height: 60px; padding: 0 8px 0 20px; border-bottom: 1px solid var(--line-ink); }
+.booking__title { font-weight: 500; }
+.booking__ext { margin-left: auto; font-size: var(--fs-sm); color: var(--on-ink-50); }
+.booking__close { width: 44px; height: 44px; background: none; border: 0; color: var(--on-ink); font-size: 28px; line-height: 1; cursor: pointer; border-radius: var(--r-pill); }
+@media (hover: hover) { .booking__close:hover { background: oklch(1 0 0 / 0.1); } .booking__ext:hover { color: var(--on-ink); } }
+/* Вікно запису виходить так само, як вікно дзвінка: коротко проявляється і
+   підіймається. Раніше воно зʼявлялось миттєво, а головна дія сайту
+   відкривалась найгрубіше з усіх. */
+.booking[open] { animation: booking-in 0.28s var(--ease); }
+@keyframes booking-in { from { opacity: 0; transform: translateY(12px); } }
+.booking__body { position: relative; flex: 1; display: flex; }
+/* Віджет прозорий, доки не завантажився: під ним темне тло вікна й
+   індикатор, а не білий аркуш. Білий ґрунт вмикається разом із ним. */
+.booking__frame { flex: 1; width: 100%; border: 0; background: transparent; opacity: 0; transition: opacity 0.3s var(--ease); }
+.booking__frame.is-ready { background: #fff; opacity: 1; }
+.booking__wait {
+  position: absolute; inset: 0; margin: auto; width: 28px; height: 28px;
+  border: 2px solid oklch(1 0 0 / 0.14); border-top-color: var(--on-ink-70); border-radius: 50%;
+  animation: booking-spin 0.8s linear infinite;
+}
+@keyframes booking-spin { to { transform: rotate(1turn); } }
+@media (prefers-reduced-motion: reduce) {
+  .booking[open] { animation: none; }
+  .booking__frame { transition: none; }
+  .booking__wait { animation-duration: 2.4s; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .btn, .btn-icon, .btn-icon svg, .btn-text > span, .btn-text-icon svg, .chip,
+  .barber__frame, .barber__photo, .brand img, .brand__name { transition: none !important; }
+  .sk::after { animation: none; }
+  .hero__line { animation: none; }
+  .hero__proof-line, .hero__sub, .hero__cta, .hero__tel-wrap, .hero__slots { animation: none; }
+  .price-list__row strong { animation: none; }
+  /* Ті самі селектори, що ховають: коротший програв би їм у специфічності. */
+  .js .reveal:not(.is-in):not(.reveal--list),
+  .js .reveal--blur:not(.is-in),
+  .js .reveal:not(.is-in) .stagger > *,
+  .js .reveal.stagger:not(.is-in) > *,
+  .js .reveal:not(.is-in) .stagger-item { transform: none; filter: none; }
+}
+
+/* ---------- Адаптив ---------- */
+
+
+
+@media (min-width: 640px) {
+  :root { --gut: 36px; --card-gap: 16px; --card-w: calc((100% - 1.15 * 16px) / 2.15); }
+}
+
+@media (min-width: 768px) {
+
+  .hero__veil { background: linear-gradient(90deg,
+    oklch(0.17 0.006 95 / 0.92) 0%,
+    oklch(0.17 0.006 95 / 0.70) 52%,
+    oklch(0.17 0.006 95 / 0.55) 100%); }
+  .hero__inner { padding: calc(var(--header-h) + 16px) var(--pad); flex-direction: row; align-items: center; justify-content: space-between; gap: 48px; }
+  .hero__copy { max-width: min(52%, 36rem); }
+  .hero__proof-line { margin-bottom: 18px; }
+  .hero__slots { width: min(46%, 28rem); }
+  /* Коли Altegio не відповідає, панель не малюється зовсім, і порожня
+     колонка стоїть просто так. Прибираємо її, а заголовок відпускаємо
+     більшим: ширшим робити нічого, бо текст і так не стиснутий панеллю,
+     він завширшки зі свій найдовший рядок. Тому росте кегль, а не коробка. */
+  .hero__slots:empty { display: none; }
+  .hero__inner:not(:has(.slots)) .hero__copy { max-width: min(74%, 52rem); }
+  .hero__inner:not(:has(.slots)) h1 { font-size: clamp(2rem, 9.6vw, 7rem); }
+  .hero__inner:not(:has(.slots)) .hero__sub { max-width: 48ch; }
+  .header__inner { gap: 16px; }
+  .nav { padding: 5px; border-radius: var(--r-pill); background: oklch(0.17 0.006 95 / 0.55); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+  body[data-logo="dark"] .nav { background: oklch(0.965 0.005 95 / 0.62); }
+  .nav__list { display: flex; }
+  /* У пігулці кнопка видима завжди: якби вона зникала на герої, пігулка
+     міняла б ширину просто від прокрутки. */
+  .header__cta { margin-left: 12px; padding: 6px 6px 6px 18px; font-size: var(--fs-sm); }
+  .js body:not([data-hero-cta="off"]) .header__cta,
+  body[data-hero-cta="on"] .header__cta { opacity: 1; transform: none; pointer-events: auto; }
+  .header__cta .btn-icon { display: flex; }
+  /* Чипи лишаються рейлом і на десктопі: перенесення в два рядки роздувало
+     панель до 689px і вона з'їдала весь перший екран. */
+  .chips { margin-inline: -20px; padding-inline: 20px; }
+  /* Колонки більше немає: заголовок із кнопкою, під ними зал на всю ширину. */
+  .about { gap: 48px; }
+  .works__track { gap: 16px; }
+  .works__track > li { flex-basis: calc((100% - 3.3 * 16px) / 4.3); }
+  .works__track::after { flex-basis: calc(var(--pad) - 16px); }
+  .contacts { grid-template-columns: 1fr 1.2fr; gap: 64px; }
+  .contacts__map iframe { height: 100%; min-height: 380px; }
+  /* Соцмережі й підпис розробника стоять разом праворуч, розділені рискою.
+     Навігація забирає вільне місце і притискає цю пару до краю. */
+  .footer__inner { grid-template-columns: auto 1fr auto auto; align-items: center; gap: 40px; }
+  /* Риска стоїть рівно посередині: сітка дає 40px, половину з них зʼїдає
+     відʼємне поле, тому по обидва боки лишається по 20px. */
+  .footer__credit { margin-left: -20px; }
+  .footer__credit::before {
+    content: ""; width: 1px; height: 16px; margin-right: 20px;
+    background: currentColor; opacity: 0.3;
+  }
+  .footer__nav, .footer__social { display: flex; flex-direction: row; gap: 0 24px; }
+  .footer__credit { justify-self: auto; }
+}
+
+@media (min-width: 1024px) {
+  .works__viewport { overflow: visible; margin-right: 0; }
+  .works__track { gap: 20px; }
+  .works__track > li { flex: 1 1 0; }
+  .works__track::after { display: none; }
+  :root { --card-gap: 20px; --card-w: calc((100% - 2.25 * 20px) / 3.25); }
+}
+
+/* Вище ~1320px поле рахує --pad (центрування колонки), тож далі кроків немає. */
+@media (min-width: 1280px) { :root { --gut: 40px; } }
+
+/* ---------- Смуга показу станів панелі вільних вікон ----------
+   Службовий інструмент для розмови з власником, не частина сайту. Видно
+   лише за адресою з ?demo. Навмисно виглядає як панель, а не як елемент
+   сторінки: щоб ніхто не прийняв її за керування записом. */
+.preview {
+  position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%);
+  z-index: 60; width: min(460px, calc(100vw - 32px));
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 12px 14px 14px; border-radius: var(--r-card);
+  background: oklch(0.17 0.006 95 / 0.92); backdrop-filter: blur(12px);
+  border: 1px solid var(--line-ink); color: var(--on-ink);
+}
+.preview__hint {
+  display: flex; align-items: center; gap: 8px;
+  font-size: var(--fs-xs); font-weight: 500; letter-spacing: 0.02em; color: var(--on-ink-50);
+}
+/* Єдина кольорова крапка: знак, що це режим показу, а не звичайний вигляд. */
+.preview__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--star); flex: none; }
+.preview__seg { background: oklch(0 0 0 / 0.5); }
+.preview__seg .seg__item span { min-height: 38px; font-size: var(--fs-xs); }
+.preview__what { font-size: var(--fs-xs); color: var(--on-ink-70); text-align: center; }
+.preview__close {
+  margin-left: auto; padding: 0 2px; border: 0; background: none; cursor: pointer;
+  font-size: var(--fs-sm); line-height: 1; color: var(--on-ink-50);
+}
+.preview__close:hover { color: var(--on-ink); }
+
+/* Згорнутий стан: кружечок у кутку. Менше вже не буває, а панель вікон на
+   телефоні займає всю ширину, тож будь-що більше закривало б саме те, що
+   ми й показуємо. */
+.preview-toggle {
+  position: fixed; right: 12px; bottom: 12px; z-index: 60;
+  display: grid; place-items: center; width: 40px; height: 40px;
+  border-radius: 50%; cursor: pointer; opacity: 0.55;
+  background: oklch(0.17 0.006 95 / 0.8); backdrop-filter: blur(10px);
+  border: 1px solid var(--line-ink);
+  transition: opacity 0.25s var(--ease), border-color 0.25s var(--ease);
+}
+.preview-toggle:hover, .preview-toggle:focus-visible { opacity: 1; }
+/* Увімкнений несправжній стан видно здалеку: щоб не піти зі зустрічі, лишивши
+   на сайті «все зайнято». */
+.preview-toggle.is-fake { opacity: 1; border-color: var(--star); }
+
+/* Розгорнута смуга накрила б низ контактів: відсуваємо кінець сторінки
+   рівно тоді, коли вона розгорнута. Згорнута пігулка місця не потребує. */
+body:has(.preview) { padding-bottom: 148px; }
+
+@media (max-width: 767px) {
+  .preview { bottom: 8px; padding: 10px 12px 12px; }
+  /* Пальцем, під час розмови: повертаємо звичайні 44 замість компактних 38. */
+  .preview__seg .seg__item span { min-height: 44px; padding: 0 4px; }
+}
+
+/* ---------- Подарунковий сертифікат ---------- */
+
+/* Чорнильна картка на світлому ґрунті. У сусідів на цьому місці золото й
+   тан, у нас акценту немає взагалі, тому наголос робиться інверсією заливки,
+   як і скрізь на сайті. Секція стоїть перед контактами: купують дзвінком,
+   а телефони одразу нижче. */
+/* Білий ґрунт, а не сірий: «Про нас» вище теж сіра, і дві сірі секції
+   підряд зливались в одну пляму. Так смуги чергуються: сірий, білий,
+   сірий, білий, темні контакти. */
+.cert-band { background: var(--paper); }
+/* Один блок, а не дві плитки поруч: фон, заокруглення і обрізка живуть на
+   самому контейнері, а знімок іде врівень із його правим краєм. Двома
+   окремими картками з проміжком це читалось як дві непов'язані речі. */
+.cert {
+  display: grid;
+  background: var(--ink); color: var(--on-ink);
+  border-radius: var(--r-card); overflow: hidden;
+}
+/* На телефоні знімок іде смугою, а не в повну висоту бланка: вертикальне
+   фото на всю ширину екрана давало 450px, і блок виходив за екран разом із
+   текстом. Обрізаємо пропорцією, фото при цьому не спотворюється, бо
+   object-fit ріже, а не стискає. Вікно зсунуте вгору, щоб у кадрі лишалась
+   шапка бланка, а не самі ножиці. */
+.cert__shot { display: block; aspect-ratio: 4 / 3; }
+.cert__shot img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 38%; display: block; }
+.cert__card {
+  padding: clamp(28px, 4vw, 56px);
+  /* Вміст по центру висоти і без розтягування рядків: сітка за
+     замовчуванням роздавала вільну висоту між абзацами, і між заголовком
+     та текстом зяяла діра. */
+  display: grid; justify-items: start; align-content: center; gap: 0;
+}
+.cert__eyebrow { color: var(--on-ink-50); }
+.cert__card h2 { margin-top: 18px; max-width: 16ch; }
+.cert__text { margin-top: 16px; max-width: 46ch; font-size: var(--fs-lead); line-height: 1.45; color: var(--on-ink-70); }
+.cert__text + .cert__text { margin-top: 10px; }
+.cert__cta { margin-top: 28px; }
+
+/* «Подзвонити» в шапці, як номер у GBI: стоїть у ряду навігації, відділене
+   від неї вертикальною рискою. Відкриває вікно з обома номерами. На
+   вузькому екрані замість нього кругла слухавка. */
+.header__tel { display: none; }
+/* Слухавка має власну заливку, а не саму іконку на фото: без підкладки
+   видно лише 18px значка, і в нього важко поцілити, хоча зона дотику
+   всі 44px. Заливка та сама, що в пігулки навігації, тож слухавка й
+   кнопка запису поруч читаються як один набір. */
+.header__call {
+  order: 3;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: var(--r-pill);
+  background: oklch(0.17 0.006 95 / 0.55);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  transition: background-color 0.25s var(--ease), color 0.25s var(--ease);
+}
+.header__call svg { width: 20px; height: 20px; }
+body[data-logo="light"] .header__call { color: var(--on-ink); }
+/* На світлій секції підкладка не світла, а ледь чорнильна: така сама
+   світла, як у пігулки навігації, на папері зникла б, а самотній значок
+   без межі це рівно те, у що важко поцілити. */
+body[data-logo="dark"] .header__call { background: oklch(0.17 0.006 95 / 0.07); color: var(--ink); }
+@media (hover: hover) {
+  body[data-logo="light"] .header__call:hover { background: oklch(0.17 0.006 95 / 0.75); }
+  body[data-logo="dark"] .header__call:hover { background: oklch(0.17 0.006 95 / 0.13); }
+}
+
+@media (min-width: 1024px) {
+  /* Слухавка поступається місцем «Подзвонити» всередині пігулки. */
+  .header__call { display: none; }
+  .header__tel {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 0 12px 0 10px; min-height: 44px;
+    font-size: var(--fs-sm); font-weight: 500;
+    transition: color 0.25s var(--ease);
+  }
+  .header__tel svg { width: 14px; height: 14px; flex: none; }
+  /* Риска псевдоелементом, а не бордюром: бордюр тягнувся б на всі 44px
+     зони дотику, а розділяти має лише висоту текстового рядка. */
+  .header__tel::before {
+    content: ""; width: 1px; height: 16px; margin-right: 6px;
+    background: currentColor; opacity: 0.3;
+  }
+  .header__tel { color: oklch(0.965 0.005 95 / 0.75); }
+  body[data-logo="dark"] .header__tel { color: oklch(0.17 0.006 95 / 0.72); }
+  @media (hover: hover) {
+    .header__tel:hover { color: var(--on-ink); }
+    body[data-logo="dark"] .header__tel:hover { color: var(--ink); }
+  }
+}
+
+@media (min-width: 768px) {
+  /* Текст ширший за знімок: бланк вертикальний, і рівні колонки зробили б
+     блок неприродно високим. */
+  .cert { grid-template-columns: 1.25fr 1fr; }
+  /* Висоту блока задає знімок, бо він вищий за текст. Пропорція замість
+     власної висоти фото вкорочує блок приблизно на пʼяту частину, а сам
+     бланк не спотворюється: object-fit обрізає, а не стискає. */
+  .cert__shot { aspect-ratio: 1 / 1.05; }
+  .cert__shot img { object-position: 50% 50%; }
+}
+
+/* ---------- «Подзвонити»: кнопка в герої і вікно з номерами ---------- */
+
+/* Кнопка в герої поруч із «Записатись»: контурна, тихіша за головну. */
+.btn-call {
+  position: relative; min-height: 52px; padding: 0 22px 0 18px; gap: 10px;
+  color: var(--on-ink); background: transparent; border-color: oklch(0.965 0.005 95 / 0.38);
+}
+.btn-call svg { width: 18px; height: 18px; flex: none; }
+@media (hover: hover) { .btn-call:hover { background: oklch(1 0 0 / 0.1); } }
+@media (max-width: 359px) { .btn-call { width: 100%; } }
+
+/* Вікно по центру на будь-якій ширині. Знизу, як аркуш, воно на телефоні
+   виглядало чужим: кнопка «Подзвонити» стоїть посеред екрана, палець там
+   само, і вибір має зʼявлятись поруч, а не внизу. */
+.call-sheet {
+  position: fixed; inset: 0; margin: auto; width: min(400px, calc(100% - 32px)); height: fit-content;
+  max-width: none; max-height: none; padding: 0; border: 0; overflow: visible;
+  background: transparent; color: var(--ink);
+}
+.call-sheet::backdrop { background: oklch(0 0 0 / 0.55); }
+.call-sheet[open]::backdrop { animation: call-fade 0.3s var(--ease); }
+.call-sheet[open] .call-sheet__body { animation: call-in 0.28s var(--ease); }
+@keyframes call-fade { from { opacity: 0; } }
+@keyframes call-in { from { opacity: 0; transform: translateY(8px) scale(0.98); } }
+.call-sheet__body { background: var(--paper); border-radius: 26px; padding: 8px; }
+/* Фокус стоїть на самому вікні лише для того, щоб не світився хрестик. */
+.call-sheet__body:focus { outline: none; }
+.call-sheet__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 2px 2px 4px 12px; }
+.call-sheet__title { margin: 0; font-size: var(--fs-xs); font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--on-paper-50); }
+.call-close { display: grid; place-items: center; width: 40px; height: 40px; border: 0; border-radius: var(--r-pill); background: transparent; color: var(--on-paper-70); cursor: pointer; }
+.call-close svg { width: 16px; height: 16px; }
+/* Вечірня підказка: з 20:00 до 9:00 замість дзвінка пропонуємо запис. */
+.call-closed { display: grid; gap: 12px; margin: 0 4px 8px; padding: 14px; border-radius: 18px; background: var(--paper-2); }
+.call-closed__text { display: flex; align-items: center; gap: 10px; margin: 0; font-size: var(--fs-sm); font-weight: 500; line-height: 1.35; color: var(--ink); }
+/* На телефоні пігулки йдуть на всю ширину без кружка зі стрілкою і з текстом
+   по центру, як «Записатись» у герої; ширше текст ліворуч, стрілка праворуч. */
+@media (min-width: 640px) { .call-closed .btn { justify-content: space-between; } }
+.call-opt { position: relative; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; min-height: 60px; padding: 10px 12px; border-radius: 14px; }
+.call-opt + .call-opt { margin-top: 2px; }
+.call-opt__text { display: block; min-width: 0; }
+/* Удень дзвонить уся смужка, а не лише цифри: посилання розтягнуте на неї. */
+.call-opt__tel::after { content: ''; position: absolute; inset: 0; border-radius: 14px; }
+.call-opt__tel:focus-visible { outline: none; }
+.call-opt__tel:focus-visible::after { outline: 2px solid var(--ink); outline-offset: -2px; }
+.call-opt__acts { display: flex; align-items: center; gap: 6px; }
+/* «Скопіювати» світле, слухавка поруч темна: дзвінок головний, копія запасна.
+   Лежить над розтягнутим посиланням, тож натиск по ній не дзвонить. */
+.call-copy { position: relative; z-index: 1; display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 0; border-radius: var(--r-pill); background: oklch(0.17 0.006 95 / 0.06); color: var(--ink); cursor: pointer; }
+.call-copy svg { width: 16px; height: 16px; }
+/* Уночі номер не посилання: видно, можна скопіювати, праворуч «з 9:00». */
+.call-opt.is-off { cursor: text; user-select: text; }
+.call-opt.is-off .call-opt__num { color: var(--on-paper-70); }
+.call-opt__later { padding: 6px 12px; border-radius: var(--r-pill); background: oklch(0.17 0.006 95 / 0.06); font-size: var(--fs-xs); font-weight: 500; color: var(--on-paper-70); white-space: nowrap; }
+.call-opt__num { display: block; font-size: var(--fs-base); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* Найвужчі телефони: номер поруч із «Скопіювати» і «з 9:00» ламався на два
+   рядки. Години вже сказано вгорі вікна, тож «з 9:00» тут зайве. */
+@media (max-width: 359.98px) { .call-opt__later { display: none; } }
+.call-opt__op { display: block; font-size: var(--fs-xs); color: var(--on-paper-50); }
+.call-opt__dial { display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--r-pill); background: var(--ink); color: var(--on-ink); }
+.call-opt__dial svg { width: 16px; height: 16px; }
+@media (hover: hover) {
+  .call-opt:not(.is-off):not(:has(.call-copy:hover)):hover { background: oklch(0.17 0.006 95 / 0.05); }
+  .call-copy:hover { background: oklch(0.17 0.006 95 / 0.11); }
+  .call-close:hover { background: oklch(0.17 0.006 95 / 0.07); color: var(--ink); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .call-sheet[open] .call-sheet__body, .call-sheet[open]::backdrop { animation: none; }
+}

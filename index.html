@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Поява блоків при прокрутці вмикається лише там, де працює скрипт: CSS
+       ховає їх тільки під класом js. Якщо застосунок не піднявся за 4 с
+       (скрипт не завантажився чи впав), клас знімаємо, і сторінка лишається
+       повною, просто без анімації. data-app ставить App після монтування. -->
+  <!-- Салон зачинений з 20:00 до 9:00 за київським часом: ставимо
+       data-closed ще до першого кадру, щоб смуга «зачинено» (ClosedBar)
+       зʼявлялась разом зі сторінкою, а не штовхала її вниз після завантаження.
+       Години ті самі, що в src/lib/hours.ts. -->
+  <script>
+    (function () {
+      try {
+        var q = new URLSearchParams(location.search).get('closed')
+        if (q === 'tomorrow' || q === 'today') { document.documentElement.dataset.closed = q; return }
+        var f
+        try { f = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Kyiv', hour: 'numeric', hourCycle: 'h23' }) }
+        catch (e) { f = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Kiev', hour: 'numeric', hourCycle: 'h23' }) }
+        var h = Number(f.formatToParts(new Date()).filter(function (p) { return p.type === 'hour' })[0].value)
+        if (h >= 20) document.documentElement.dataset.closed = 'tomorrow'
+        else if (h < 9) document.documentElement.dataset.closed = 'today'
+      } catch (e) {}
+    })()
+  </script>
+  <script>
+    document.documentElement.classList.add('js')
+    setTimeout(function () {
+      if (!document.documentElement.dataset.app) document.documentElement.classList.remove('js')
+    }, 4000)
+  </script>
+  <title>Garage Barbershop Ірпінь. Чоловічі стрижки та борода</title>
+  <meta name="description" content="Перший барбершоп Ірпеня. Чоловічі та дитячі стрижки, борода. Шевченка 4-Д, щодня з 09:00 до 20:00. Запис онлайн або за телефоном.">
+  <meta name="theme-color" content="#12120B">
+  <link rel="canonical" href="https://garagebarbershop.com.ua/">
+  <!-- Фавікон це той самий файл, що й знак у шапці: одне завантаження
+       замість двох однакових по 22 КБ. Колір і темна тема всередині файлу. -->
+  <!-- Google бере в пошук лише квадратну іконку зі стороною, кратною 48 px:
+       favicon.ico має 16, 32 і 48, favicon.svg той самий знак у квадраті.
+       Логотип у шапці (img/logo-mark.svg) вертикальний і для іконки не годився. -->
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="uk_UA">
+  <meta property="og:site_name" content="Garage Barbershop">
+  <meta property="og:title" content="Garage Barbershop Ірпінь">
+  <meta property="og:description" content="Сюди ходять роками. Чоловічі й дитячі стрижки, борода, запис онлайн або за телефоном.">
+  <meta property="og:url" content="https://garagebarbershop.com.ua/">
+  <meta property="og:image" content="https://garagebarbershop.com.ua/img/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600&display=swap">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BarberShop",
+    "name": "Garage Barbershop",
+    "alternateName": "Барбершоп Гараж Ірпінь",
+    "url": "https://garagebarbershop.com.ua/",
+    "image": "https://garagebarbershop.com.ua/img/og.jpg",
+    "telephone": ["+380000000001", "+380000000002"],
+    "priceRange": "200–1350 грн",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "вул. Шевченка, 4-Д",
+      "addressLocality": "Ірпінь",
+      "addressRegion": "Київська область",
+      "postalCode": "08200",
+      "addressCountry": "UA"
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+      "opens": "09:00", "closes": "20:00"
+    },
+    "hasMap": "https://www.google.com/maps/search/?api=1&query=Garage%20Barbershop&query_place_id=ChIJ1xMBqjIyK0cRwRWlahjkupQ",
+    "sameAs": ["https://www.instagram.com/barbershop_garage_irpin/", "https://www.facebook.com/barbershop.garageirpin/"]
+  }
+  </script>
+
+</head>
+<body data-logo="light">
+  <div id="root"></div>
+  <!-- Поява блоків при прокрутці. Живе тут, а не в застосунку: скрипт
+       застосунку важить 125 КБ стиснутим, і на повільному мобільному він
+       приходив за 3–4 с. Увесь цей час розділи під героєм лишались
+       невидимими, і хто встиг прогорнути, бачив порожню сторінку, аж поки
+       не оновить. Цей шматок спрацьовує, щойно розібрано розмітку з
+       пререндера. Reveal у застосунку лише додає сюди блоки, що зʼявились
+       пізніше.
+       Блок проявляється, коли його верх піднявся на 12% над нижнім краєм
+       екрана. Те, що вже вище за екран (сторінку відкрили посередині,
+       прогорнули одним рухом), показуємо одразу. IntersectionObserver
+       мовчить там, де браузер не малює кадрів, і не помічає блок, який
+       проскочили за один кадр, тому, поки є що показувати, раз на 0,6 с
+       дивиться ще й таймер. -->
+  <script>
+    (function () {
+      var root = document.documentElement
+      if (!root.classList.contains('js')) return
+      if (!('IntersectionObserver' in window)) { root.classList.remove('js'); return }
+      var pending = []
+      var timer = 0
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting || e.boundingClientRect.bottom <= 0) show(e.target)
+        })
+      }, { rootMargin: '0px 0px -12% 0px' })
+      function drop(el) {
+        io.unobserve(el)
+        var i = pending.indexOf(el)
+        if (i > -1) pending.splice(i, 1)
+      }
+      function show(el) {
+        el.classList.add('is-in')
+        drop(el)
+      }
+      function sweep() {
+        /* Запобіжник угорі вже зняв клас js: ховати більше нічого, закриваємо все. */
+        var off = !root.classList.contains('js')
+        pending.slice().forEach(function (el) {
+          if (!el.isConnected) drop(el)
+          else if (off || el.getBoundingClientRect().top < innerHeight * 0.88) show(el)
+        })
+        if (!pending.length) { clearInterval(timer); timer = 0 }
+      }
+      window.garageReveal = function (el) {
+        if (el.classList.contains('is-in') || pending.indexOf(el) > -1) return
+        pending.push(el)
+        io.observe(el)
+        if (!timer) timer = setInterval(sweep, 600)
+      }
+      var found = document.querySelectorAll('.reveal')
+      for (var i = 0; i < found.length; i++) window.garageReveal(found[i])
+      addEventListener('pageshow', sweep)
+    })()
+  </script>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

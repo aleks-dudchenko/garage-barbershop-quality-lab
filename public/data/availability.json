@@ -1,0 +1,458 @@
+{
+  "mock_slots": true,
+  "_note": "Майстри, рівні, ціни та id послуг — реальні, зняті з Altegio (company 10000, форма 411004) 21.09.2026. МОКОВІ лише slots: до підключення проксі вони задані як dayOffset+time, щоб не протухали, і покривають тиждень наперед. Один майстер навмисно щільно зайнятий: його найближче вікно аж за кілька днів, і саме на ньому видно, що панель показує справжню дату, а не «вікон немає». Проксі має віддавати той самий контракт, але зі slots[].datetime з book_times. Ціна й id послуги залежать від РІВНЯ майстра — тому services лежать усередині кожного майстра, а не глобально.",
+  "tz": "Europe/Kyiv",
+  "link_format": "o",
+  "widget": {
+    "base": "https://n100000.alteg.io/",
+    "company_id": 10000
+  },
+  "service_keys": [
+    {
+      "key": "haircut",
+      "title": "Стрижка"
+    },
+    {
+      "key": "beard",
+      "title": "Борода"
+    },
+    {
+      "key": "combo",
+      "title": "Стрижка + Борода"
+    },
+    {
+      "key": "kids",
+      "title": "Дитяча стрижка"
+    }
+  ],
+  "masters": [
+    {
+      "id": 1000107,
+      "name": "Анна Плахотнюк",
+      "level": "Топ Барбер",
+      "rating": 4.99,
+      "reviews": 930,
+      "services": {
+        "haircut": {
+          "id": 100116,
+          "price": 700
+        },
+        "beard": {
+          "id": 100118,
+          "price": 400
+        },
+        "combo": {
+          "id": 1000108,
+          "price": 1100
+        },
+        "kids": {
+          "id": 100117,
+          "price": 650
+        }
+      },
+      "slots": [
+        {
+          "dayOffset": 0,
+          "time": "15:00"
+        },
+        {
+          "dayOffset": 0,
+          "time": "18:30"
+        },
+        {
+          "dayOffset": 1,
+          "time": "11:00"
+        },
+        {
+          "dayOffset": 1,
+          "time": "16:00"
+        },
+        {
+          "dayOffset": 2,
+          "time": "10:30"
+        },
+        {
+          "dayOffset": 3,
+          "time": "13:00"
+        },
+        {
+          "dayOffset": 4,
+          "time": "17:30"
+        },
+        {
+          "dayOffset": 5,
+          "time": "11:30"
+        },
+        {
+          "dayOffset": 6,
+          "time": "14:00"
+        }
+      ]
+    },
+    {
+      "id": 1000110,
+      "name": "Яна Девотченкова",
+      "level": "Топ Барбер",
+      "rating": 4.99,
+      "reviews": 542,
+      "services": {
+        "haircut": {
+          "id": 100116,
+          "price": 700
+        },
+        "beard": {
+          "id": 100118,
+          "price": 400
+        },
+        "combo": {
+          "id": 1000108,
+          "price": 1100
+        },
+        "kids": {
+          "id": 100117,
+          "price": 650
+        }
+      },
+      "slots": [
+        {
+          "dayOffset": 0,
+          "time": "13:30"
+        },
+        {
+          "dayOffset": 0,
+          "time": "17:00"
+        },
+        {
+          "dayOffset": 1,
+          "time": "12:00"
+        },
+        {
+          "dayOffset": 2,
+          "time": "14:00"
+        },
+        {
+          "dayOffset": 3,
+          "time": "10:00"
+        },
+        {
+          "dayOffset": 4,
+          "time": "16:00"
+        },
+        {
+          "dayOffset": 5,
+          "time": "13:30"
+        },
+        {
+          "dayOffset": 6,
+          "time": "11:00"
+        }
+      ]
+    },
+    {
+      "id": 1000111,
+      "name": "Анна Зубенко",
+      "level": "Топ Барбер",
+      "rating": 4.99,
+      "reviews": 415,
+      "services": {
+        "haircut": {
+          "id": 100116,
+          "price": 700
+        },
+        "beard": {
+          "id": 100118,
+          "price": 400
+        },
+        "combo": {
+          "id": 1000108,
+          "price": 1100
+        },
+        "kids": {
+          "id": 100117,
+          "price": 650
+        }
+      },
+      "slots": [
+        {
+          "dayOffset": 1,
+          "time": "10:00"
+        },
+        {
+          "dayOffset": 1,
+          "time": "13:00"
+        },
+        {
+          "dayOffset": 2,
+          "time": "16:30"
+        },
+        {
+          "dayOffset": 3,
+          "time": "11:30"
+        },
+        {
+          "dayOffset": 5,
+          "time": "15:00"
+        },
+        {
+          "dayOffset": 6,
+          "time": "10:30"
+        }
+      ]
+    },
+    {
+      "id": 1000109,
+      "name": "Максим Кузнецов",
+      "level": "Старший Барбер",
+      "rating": 5,
+      "reviews": 464,
+      "services": {
+        "haircut": {
+          "id": 10000100,
+          "price": 600
+        },
+        "beard": {
+          "id": 10000101,
+          "price": 350
+        },
+        "combo": {
+          "id": 10000102,
+          "price": 950
+        },
+        "kids": {
+          "id": 10000103,
+          "price": 550
+        }
+      },
+      "slots": [
+        {
+          "dayOffset": 0,
+          "time": "14:00"
+        },
+        {
+          "dayOffset": 0,
+          "time": "16:30"
+        },
+        {
+          "dayOffset": 0,
+          "time": "19:00"
+        },
+        {
+          "dayOffset": 1,
+          "time": "11:30"
+        },
+        {
+          "dayOffset": 2,
+          "time": "13:00"
+        },
+        {
+          "dayOffset": 3,
+          "time": "17:00"
+        },
+        {
+          "dayOffset": 4,
+          "time": "10:00"
+        },
+        {
+          "dayOffset": 6,
+          "time": "16:00"
+        }
+      ]
+    },
+    {
+      "id": 1000113,
+      "name": "Надія Гудима",
+      "level": "Барбер",
+      "rating": 4.95,
+      "reviews": 212,
+      "services": {
+        "haircut": {
+          "id": 1000119,
+          "price": 500
+        },
+        "beard": {
+          "id": 1000121,
+          "price": 300
+        },
+        "combo": {
+          "id": 1000122,
+          "price": 800
+        },
+        "kids": {
+          "id": 1000120,
+          "price": 450
+        }
+      },
+      "slots": [
+        {
+          "dayOffset": 0,
+          "time": "15:30"
+        },
+        {
+          "dayOffset": 1,
+          "time": "10:30"
+        },
+        {
+          "dayOffset": 1,
+          "time": "14:00"
+        },
+        {
+          "dayOffset": 2,
+          "time": "11:00"
+        },
+        {
+          "dayOffset": 4,
+          "time": "13:30"
+        },
+        {
+          "dayOffset": 5,
+          "time": "17:00"
+        }
+      ]
+    },
+    {
+      "id": 1000112,
+      "name": "Олена Чернишенко",
+      "level": "Барбер",
+      "rating": 4.93,
+      "reviews": 149,
+      "services": {
+        "haircut": {
+          "id": 1000119,
+          "price": 500
+        },
+        "beard": {
+          "id": 1000121,
+          "price": 300
+        },
+        "combo": {
+          "id": 1000122,
+          "price": 800
+        },
+        "kids": {
+          "id": 1000120,
+          "price": 450
+        }
+      },
+      "slots": [
+        {
+          "dayOffset": 4,
+          "time": "12:00"
+        },
+        {
+          "dayOffset": 5,
+          "time": "10:00"
+        },
+        {
+          "dayOffset": 6,
+          "time": "15:30"
+        }
+      ]
+    },
+    {
+      "id": 1000114,
+      "name": "Анна Шевченко",
+      "level": "Барбер",
+      "rating": 4.99,
+      "reviews": 91,
+      "services": {
+        "haircut": {
+          "id": 1000119,
+          "price": 500
+        },
+        "beard": {
+          "id": 1000121,
+          "price": 300
+        },
+        "combo": {
+          "id": 1000122,
+          "price": 800
+        },
+        "kids": {
+          "id": 1000120,
+          "price": 450
+        }
+      },
+      "slots": [
+        {
+          "dayOffset": 3,
+          "time": "14:30"
+        },
+        {
+          "dayOffset": 4,
+          "time": "11:00"
+        },
+        {
+          "dayOffset": 5,
+          "time": "16:30"
+        },
+        {
+          "dayOffset": 6,
+          "time": "13:00"
+        }
+      ]
+    },
+    {
+      "id": 1000115,
+      "name": "Марія Барташова",
+      "level": "Молодший Барбер",
+      "rating": 4.89,
+      "reviews": 36,
+      "services": {
+        "haircut": {
+          "id": 10000104,
+          "price": 400
+        },
+        "beard": {
+          "id": 10000105,
+          "price": 250
+        },
+        "combo": {
+          "id": 10000106,
+          "price": 650
+        },
+        "kids": {
+          "id": 1000123,
+          "price": 350
+        }
+      },
+      "slots": [
+        {
+          "dayOffset": 0,
+          "time": "14:30"
+        },
+        {
+          "dayOffset": 0,
+          "time": "17:30"
+        },
+        {
+          "dayOffset": 1,
+          "time": "10:00"
+        },
+        {
+          "dayOffset": 1,
+          "time": "13:30"
+        },
+        {
+          "dayOffset": 2,
+          "time": "15:00"
+        },
+        {
+          "dayOffset": 3,
+          "time": "12:30"
+        },
+        {
+          "dayOffset": 4,
+          "time": "18:00"
+        },
+        {
+          "dayOffset": 5,
+          "time": "14:00"
+        },
+        {
+          "dayOffset": 6,
+          "time": "10:00"
+        }
+      ]
+    }
+  ]
+}

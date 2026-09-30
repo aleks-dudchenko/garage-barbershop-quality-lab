@@ -1,0 +1,21 @@
+@import "tailwindcss";
+/* Уся дизайн-система Garage лишається як є: токени, ґрунти, пігулки, поява.
+   Tailwind їде поверх, його утиліти потрібні компонентам motion-primitives. */
+@import "./garage.css";
+
+/* Пробрасуємо токени Garage в Tailwind, щоб класи типу bg-paper і text-ink
+   брали ті самі значення, а не дублювали палітру. */
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-on-paper: var(--on-paper);
+  --color-on-ink: var(--on-ink);
+  --color-line-paper: var(--line-paper);
+  --color-line-ink: var(--line-ink);
+  --font-sans: var(--font);
+  --radius-card: var(--r-card);
+  --radius-pill: var(--r-pill);
+  --ease-out-expo: var(--ease);
+}

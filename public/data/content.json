@@ -1,0 +1,179 @@
+{
+  "updatedAt": "2026-09-21T18:06:45.476Z",
+  "prices": {
+    "Чоловіча стрижка": [
+      "400",
+      "500",
+      "600",
+      "700"
+    ],
+    "Подовжена стрижка": [
+      "400–600",
+      "500–700",
+      "600–800",
+      "700–900"
+    ],
+    "Стрижка бороди": [
+      "250–300",
+      "300–350",
+      "350–400",
+      "400–450"
+    ],
+    "Стрижка + борода": [
+      "650–700",
+      "800–850",
+      "950–1000",
+      "1100–1150"
+    ],
+    "Дитяча стрижка": [
+      "350",
+      "450",
+      "550",
+      "650"
+    ],
+    "Батько + син": [
+      "700–750",
+      "900–950",
+      "1100–1150",
+      "1300–1350"
+    ],
+    "Стрижка машинкою": [
+      "300–350",
+      "350–450",
+      "450–550",
+      "550–650"
+    ],
+    "Стрижка під нуль": [
+      "200–250",
+      "200–300",
+      "250–350",
+      "300–400"
+    ],
+    "Камуфлювання, борода": [
+      "200",
+      "300",
+      "350",
+      "400"
+    ],
+    "Камуфлювання, голова": [
+      "300",
+      "400",
+      "450",
+      "500"
+    ]
+  },
+  "barbers": [
+    {
+      "id": "1000107",
+      "slug": "plakhotniuk",
+      "name": "Анна Плахотнюк",
+      "level": "Топ Барбер",
+      "top": true,
+      "rating": "4,99",
+      "votes": "930 оцінок",
+      "href": "https://n100000.alteg.io/?o=m1000107",
+      "eager": true,
+      "hidden": false,
+      "photo": "srcset",
+      "added": false
+    },
+    {
+      "id": "1000110",
+      "slug": "devotchenkova",
+      "name": "Яна Девотченкова",
+      "level": "Топ Барбер",
+      "top": true,
+      "rating": "4,99",
+      "votes": "542 оцінки",
+      "href": "https://n100000.alteg.io/?o=m1000110",
+      "eager": true,
+      "hidden": false,
+      "photo": "srcset",
+      "added": false
+    },
+    {
+      "id": "1000111",
+      "slug": "zubenko",
+      "name": "Анна Зубенко",
+      "level": "Топ Барбер",
+      "top": true,
+      "rating": "4,99",
+      "votes": "415 оцінок",
+      "href": "https://n100000.alteg.io/?o=m1000111",
+      "eager": true,
+      "hidden": false,
+      "photo": "srcset",
+      "added": false
+    },
+    {
+      "id": "1000109",
+      "slug": "kuznetsov",
+      "name": "Максим Кузнецов",
+      "level": "Старший Барбер",
+      "top": false,
+      "rating": "5,0",
+      "votes": "464 оцінки",
+      "href": "https://n100000.alteg.io/?o=m1000109",
+      "eager": false,
+      "hidden": false,
+      "photo": "srcset",
+      "added": false
+    },
+    {
+      "id": "1000113",
+      "slug": "hudyma",
+      "name": "Надія Гудима",
+      "level": "Барбер",
+      "top": false,
+      "rating": "4,95",
+      "votes": "212 оцінок",
+      "href": "https://n100000.alteg.io/?o=m1000113",
+      "eager": false,
+      "hidden": false,
+      "photo": "srcset",
+      "added": false
+    },
+    {
+      "id": "1000112",
+      "slug": "chernyshenko",
+      "name": "Олена Чернишенко",
+      "level": "Барбер",
+      "top": false,
+      "rating": "4,93",
+      "votes": "149 оцінок",
+      "href": "https://n100000.alteg.io/?o=m1000112",
+      "eager": false,
+      "hidden": false,
+      "photo": "srcset",
+      "added": false
+    },
+    {
+      "id": "1000114",
+      "slug": "shevchenko",
+      "name": "Анна Шевченко",
+      "level": "Барбер",
+      "top": false,
+      "rating": "4,99",
+      "votes": "91 оцінка",
+      "href": "https://n100000.alteg.io/?o=m1000114",
+      "eager": false,
+      "hidden": false,
+      "photo": "srcset",
+      "added": false
+    },
+    {
+      "id": "1000115",
+      "slug": "bartashova",
+      "name": "Марія Барташова",
+      "level": "Молодший Барбер",
+      "top": false,
+      "rating": "4,89",
+      "votes": "36 оцінок",
+      "href": "https://n100000.alteg.io/?o=m1000115",
+      "eager": false,
+      "hidden": false,
+      "photo": "srcset",
+      "added": false
+    }
+  ]
+}
